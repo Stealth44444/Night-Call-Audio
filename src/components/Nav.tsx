@@ -13,7 +13,7 @@ export default function Nav() {
       <div className="glass border-b border-border">
         <nav className="max-w-[1440px] mx-auto px-8 md:px-12 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3.5 group transition-all">
-            <div className="relative w-10 h-10 group-hover:scale-110 transition-transform duration-500 ease-out">
+            <div className="relative w-7 h-7 md:w-10 md:h-10 group-hover:scale-110 transition-transform duration-500 ease-out">
               <Image 
                 src="/nca_logo.svg" 
                 alt="Logo" 

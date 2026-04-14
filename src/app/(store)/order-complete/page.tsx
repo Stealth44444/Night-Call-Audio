@@ -2,17 +2,35 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { Download, BadgeCheck, Loader2, Mail, Clock } from 'lucide-react'
+import { ArrowRight, Loader2, Mail, RotateCcw } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
 
 interface DownloadItem {
   token: string
   productName: string
+  productImage: string | null
   expiresAt: string
+  purchasedAt: string
   used: boolean
 }
 
 type Status = 'waiting-email' | 'polling' | 'ready' | 'timeout'
+
+function fmt(iso: string) {
+  return new Date(iso).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+}
+
+function fmtShort(iso: string) {
+  const d = new Date(iso)
+  const yy = String(d.getFullYear()).slice(2)
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yy}.${mm}.${dd}`
+}
 
 export default function OrderCompletePage() {
   const [email, setEmail] = useState('')
@@ -87,107 +105,172 @@ export default function OrderCompletePage() {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--bg-deep)_70%)]" />
 
-      <div className="relative z-10 w-full max-w-lg mx-auto px-6">
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-6">
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <p className="font-display font-bold text-xs uppercase tracking-widest text-accent mb-3">Night Call Audio</p>
-          {status === 'ready' ? (
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <BadgeCheck size={28} className="text-emerald-400" />
-              <h1 className="font-display font-extrabold text-3xl">구매 완료</h1>
-            </div>
-          ) : (
-            <h1 className="font-display font-extrabold text-3xl mb-2">내 다운로드</h1>
+        <div className="mb-10">
+          <p className="font-display font-bold text-[10px] uppercase tracking-[0.25em] text-accent mb-4">
+            Night Call Audio
+          </p>
+          <h1 className="font-display font-extrabold text-4xl leading-none tracking-tight">
+            {status === 'ready' ? '구매 내역' : '내 다운로드'}
+          </h1>
+          {status === 'ready' && (
+            <p className="text-text-muted text-sm mt-2 font-mono">{email}</p>
           )}
         </div>
 
-        <div className="glass rounded-2xl p-8">
-          {/* Waiting for email */}
-          {status === 'waiting-email' && (
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
-              <p className="text-text-secondary text-sm text-center mb-6">
-                구매 시 사용한 이메일을 입력하면 다운로드 링크를 확인할 수 있습니다.
-              </p>
-              <div>
-                <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                  이메일 주소
-                </label>
-                <input
-                  type="email"
-                  value={inputEmail}
-                  onChange={e => setInputEmail(e.target.value)}
-                  placeholder="이메일을 입력하세요"
-                  required
-                  className="w-full px-4 py-3 bg-bg-deep border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-text-muted"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-3 bg-accent text-bg-deep font-bold rounded-xl hover:bg-accent-bright transition-colors text-sm btn-glow"
-              >
-                다운로드 확인
-              </button>
-            </form>
-          )}
+        {/* Waiting for email */}
+        {status === 'waiting-email' && (
+          <form onSubmit={handleEmailSubmit} className="space-y-3">
+            <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+              구매 시 입력한 이메일 주소로 다운로드 항목을 확인합니다.
+            </p>
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-text-muted mb-1.5">
+              이메일 주소
+            </label>
+            <input
+              type="email"
+              value={inputEmail}
+              onChange={e => setInputEmail(e.target.value)}
+              placeholder="your@email.com"
+              required
+              className="w-full px-4 py-3 bg-transparent border border-border rounded-none text-sm font-mono focus:outline-none focus:border-accent transition-colors placeholder:text-text-muted/40 tracking-wide"
+            />
+            <button
+              type="submit"
+              className="w-full py-3 bg-accent text-bg-deep font-bold tracking-widest text-xs uppercase transition-colors hover:bg-accent-bright btn-glow"
+            >
+              확인
+            </button>
+          </form>
+        )}
 
-          {/* Polling */}
-          {status === 'polling' && (
-            <div className="text-center py-6">
-              <Loader2 size={32} className="animate-spin text-accent mx-auto mb-4" />
-              <p className="font-display font-bold text-lg mb-2">결제 확인 중...</p>
-              <p className="text-text-secondary text-sm">
-                결제가 완료되면 자동으로 다운로드 링크가 표시됩니다.
-              </p>
-              <p className="text-text-muted text-xs mt-4">{email}</p>
+        {/* Polling */}
+        {status === 'polling' && (
+          <div className="py-12">
+            <div className="flex items-center gap-3 mb-3">
+              <Loader2 size={16} className="animate-spin text-accent" />
+              <p className="font-mono text-sm text-text-secondary tracking-wide">결제 확인 중...</p>
             </div>
-          )}
-
-          {/* Downloads ready */}
-          {status === 'ready' && (
-            <div className="space-y-4">
-              <p className="text-text-secondary text-sm text-center mb-6">
-                구매하신 파일을 아래에서 다운로드하세요.
-              </p>
-              {downloads.map(item => (
-                <div key={item.token} className="bg-bg-deep/60 rounded-xl p-5 flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="font-display font-bold text-sm truncate">{item.productName}</p>
-                    <p className="text-text-muted text-xs mt-1 flex items-center gap-1">
-                      <Clock size={10} />
-                      {new Date(item.expiresAt).toLocaleDateString('ko-KR')} 까지
-                    </p>
-                  </div>
-                  <Link
-                    href={`/download/${item.token}`}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-accent text-bg-deep font-bold rounded-full hover:bg-accent-bright transition-colors text-xs shrink-0 btn-glow"
-                  >
-                    <Download size={13} /> 다운로드
-                  </Link>
-                </div>
-              ))}
+            <div className="w-full h-px bg-border mt-6">
+              <div className="h-px bg-accent animate-[progress_3s_ease-in-out_infinite]" style={{ width: '60%' }} />
             </div>
-          )}
+            <p className="font-mono text-xs text-text-muted mt-3">{email}</p>
+          </div>
+        )}
 
-          {/* Timeout */}
-          {status === 'timeout' && (
-            <div className="text-center py-6">
-              <Mail size={32} className="text-accent mx-auto mb-4" />
-              <p className="font-display font-bold text-lg mb-2">이메일을 확인하세요</p>
-              <p className="text-text-secondary text-sm">
+        {/* Downloads ready */}
+        {status === 'ready' && (
+          <div className="space-y-px">
+            {downloads.map((item, idx) => (
+              <DownloadCard key={item.token} item={item} index={idx} />
+            ))}
+          </div>
+        )}
+
+        {/* Timeout */}
+        {status === 'timeout' && (
+          <div className="py-10 border border-border">
+            <div className="px-8">
+              <Mail size={20} className="text-accent mb-5" />
+              <p className="font-display font-bold text-xl mb-3">이메일을 확인하세요</p>
+              <p className="text-text-secondary text-sm leading-relaxed">
                 결제 확인 후 다운로드 링크를 이메일로 발송했습니다.
-                <br />잠시 후 다시 시도하거나 이메일을 확인해주세요.
+                잠시 후 다시 시도하거나 받은 편지함을 확인해주세요.
               </p>
               <button
                 onClick={() => startPolling(email)}
-                className="mt-6 px-6 py-2.5 border border-border rounded-full text-sm hover:border-border-hover hover:bg-bg-elevated transition-colors"
+                className="mt-8 flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
               >
-                다시 확인
+                <RotateCcw size={12} /> 다시 확인
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
+    </div>
+  )
+}
+
+function DownloadCard({
+  item,
+  index,
+}: {
+  item: DownloadItem
+  index: number
+}) {
+  return (
+    <div
+      className="group border border-border hover:border-border-hover bg-bg-deep/40 transition-colors"
+      style={{ animationDelay: `${index * 80}ms` }}
+    >
+      <div className="flex items-stretch">
+
+        {/* Accent stripe */}
+        <div className="w-0.5 bg-accent shrink-0 self-stretch" />
+
+        {/* Thumbnail */}
+        {item.productImage && (
+          <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden self-stretch">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.productImage}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 min-w-0 px-5 py-5">
+
+          {/* Product name */}
+          <p className="font-display font-extrabold text-lg leading-tight truncate mb-3 tracking-tight">
+            {item.productName}
+          </p>
+
+          {/* Dashed divider */}
+          <div className="border-t border-dashed border-border mb-3" />
+
+          {/* Meta row */}
+          <div className="flex items-end justify-between gap-4">
+            <MetaField label="구매일" value={fmt(item.purchasedAt)} shortValue={fmtShort(item.purchasedAt)} />
+            <MetaField label="만료일" value={fmt(item.expiresAt)} shortValue={fmtShort(item.expiresAt)} align="right" />
+          </div>
+        </div>
+
+        {/* Arrow link */}
+        <div className="flex items-center px-5 shrink-0 border-l border-border">
+          <Link
+            href={`/download/${item.token}`}
+            className="w-8 h-8 flex items-center justify-center text-text-muted hover:text-accent transition-colors"
+            aria-label="다운로드 페이지로 이동"
+          >
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MetaField({ label, value, shortValue, align = 'left' }: {
+  label: string
+  value: string
+  shortValue?: string
+  align?: 'left' | 'right'
+}) {
+  return (
+    <div className={align === 'right' ? 'text-right' : ''}>
+      <span className="font-mono text-[9px] uppercase tracking-widest text-text-muted block mb-0.5">
+        {label}
+      </span>
+      <span className="font-mono text-xs text-text-primary">
+        <span className="hidden sm:inline">{value}</span>
+        <span className="sm:hidden">{shortValue ?? value}</span>
+      </span>
     </div>
   )
 }

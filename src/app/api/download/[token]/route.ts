@@ -10,7 +10,7 @@ export async function GET(
 
   const { data: downloadToken, error } = await supabaseAdmin
     .from('download_tokens')
-    .select('id, product_id, expires_at')
+    .select('id, product_id, expires_at, created_at')
     .eq('token', token)
     .single()
 
@@ -24,13 +24,22 @@ export async function GET(
 
   const { data: product } = await supabaseAdmin
     .from('products')
-    .select('name')
+    .select('name, image_url')
     .eq('id', downloadToken.product_id)
     .single()
 
+  // image_url이 상대 경로인 경우 공개 URL로 변환
+  let imageUrl = product?.image_url ?? null
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    const { data } = supabaseAdmin.storage.from('products').getPublicUrl(imageUrl)
+    imageUrl = data.publicUrl
+  }
+
   return NextResponse.json({
     productName: product?.name ?? 'Unknown Product',
+    productImage: imageUrl,
     expiresAt: downloadToken.expires_at,
+    purchasedAt: downloadToken.created_at,
   })
 }
 

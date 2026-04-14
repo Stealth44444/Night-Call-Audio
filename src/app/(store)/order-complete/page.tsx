@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { Download, CheckCircle, Loader2, Mail, Clock, Lock } from 'lucide-react'
+import { Download, BadgeCheck, Loader2, Mail, Clock } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
 
 interface DownloadItem {
@@ -93,7 +93,7 @@ export default function OrderCompletePage() {
           <p className="font-display font-bold text-xs uppercase tracking-widest text-accent mb-3">Night Call Audio</p>
           {status === 'ready' ? (
             <div className="flex items-center justify-center gap-3 mb-2">
-              <CheckCircle size={28} className="text-emerald-400" />
+              <BadgeCheck size={28} className="text-emerald-400" />
               <h1 className="font-display font-extrabold text-3xl">구매 완료</h1>
             </div>
           ) : (
@@ -157,19 +157,12 @@ export default function OrderCompletePage() {
                       {new Date(item.expiresAt).toLocaleDateString('ko-KR')} 까지
                     </p>
                   </div>
-                  {item.used ? (
-                    <div className="flex items-center gap-1.5 text-text-muted text-xs shrink-0">
-                      <Lock size={13} />
-                      <span>완료</span>
-                    </div>
-                  ) : (
-                    <Link
-                      href={`/download/${item.token}`}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-accent text-bg-deep font-bold rounded-full hover:bg-accent-bright transition-colors text-xs shrink-0 btn-glow"
-                    >
-                      <Download size={13} /> 다운로드
-                    </Link>
-                  )}
+                  <Link
+                    href={`/download/${item.token}`}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-accent text-bg-deep font-bold rounded-full hover:bg-accent-bright transition-colors text-xs shrink-0 btn-glow"
+                  >
+                    <Download size={13} /> 다운로드
+                  </Link>
                 </div>
               ))}
             </div>
@@ -194,12 +187,6 @@ export default function OrderCompletePage() {
           )}
         </div>
 
-        <p className="text-center text-text-muted text-xs mt-6">
-          문제가 있으시면{' '}
-          <Link href="/" className="text-accent hover:underline">
-            홈으로 돌아가기
-          </Link>
-        </p>
       </div>
     </div>
   )

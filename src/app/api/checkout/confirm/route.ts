@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
   // 다운로드 토큰 생성 및 이메일 발송
   for (const order of orders as { id: string; product_id: string; email: string }[]) {
     const token = randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
     await supabaseAdmin.from('download_tokens').insert({
       order_id: order.id,

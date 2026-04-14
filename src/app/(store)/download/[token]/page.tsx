@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { use } from 'react'
-import { Download, Clock, Lock, AlertTriangle, Loader2 } from 'lucide-react'
+import { Download, Clock, AlertTriangle, Loader2 } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
 
-type Status = 'loading' | 'ready' | 'downloading' | 'expired' | 'used' | 'error'
+type Status = 'loading' | 'ready' | 'downloading' | 'expired' | 'error'
 
 export default function DownloadPage({
   params,
@@ -15,23 +15,22 @@ export default function DownloadPage({
   const { token } = use(params)
   const [status, setStatus] = useState<Status>('loading')
   const [productName, setProductName] = useState('')
+  const [expiresAt, setExpiresAt] = useState('')
   const hasFetched = useRef(false)
 
   useEffect(() => {
     if (hasFetched.current) return
     hasFetched.current = true
 
-    // GET: 토큰 검증만 (소진 안 함)
     fetch(`/api/download/${token}`)
       .then(async res => {
         const data = await res.json()
         if (res.ok) {
           setProductName(data.productName)
+          setExpiresAt(data.expiresAt)
           setStatus('ready')
         } else if (data.error === 'expired') {
           setStatus('expired')
-        } else if (data.error === 'used') {
-          setStatus('used')
         } else {
           setStatus('error')
         }
@@ -49,10 +48,7 @@ export default function DownloadPage({
 
       if (res.ok) {
         window.location.href = data.downloadUrl
-        // 잠시 후 used 상태로 전환
-        setTimeout(() => setStatus('used'), 2000)
-      } else if (data.error === 'used') {
-        setStatus('used')
+        setTimeout(() => setStatus('ready'), 1500)
       } else if (data.error === 'expired') {
         setStatus('expired')
       } else {
@@ -65,10 +61,9 @@ export default function DownloadPage({
 
   const states = {
     loading: { icon: Loader2, title: 'Preparing your download...', desc: '', iconClass: 'animate-spin text-accent' },
-    ready: { icon: Download, title: productName, desc: 'Your file is ready for download.', iconClass: 'text-emerald-400' },
+    ready: { icon: Download, title: productName, desc: expiresAt ? `${new Date(expiresAt).toLocaleDateString('ko-KR')}까지 횟수 제한 없이 다운로드 가능합니다.` : '', iconClass: 'text-emerald-400' },
     downloading: { icon: Loader2, title: '다운로드 준비 중...', desc: '', iconClass: 'animate-spin text-accent' },
     expired: { icon: Clock, title: 'Link Expired', desc: 'This download link has expired. Please contact support.', iconClass: 'text-amber-400' },
-    used: { icon: Lock, title: 'Already Downloaded', desc: 'This link has already been used. Contact support for a new link.', iconClass: 'text-text-muted' },
     error: { icon: AlertTriangle, title: 'Invalid Link', desc: 'This download link is not valid.', iconClass: 'text-red-400' },
   }
 
@@ -105,9 +100,6 @@ export default function DownloadPage({
           </button>
         )}
 
-        {status === 'ready' && (
-          <p className="text-xs text-text-muted mt-6">This is a one-time download link.</p>
-        )}
       </div>
     </div>
   )

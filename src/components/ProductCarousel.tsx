@@ -53,7 +53,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
         {products.map((product) => (
           <div 
             key={product.id} 
-            className="flex-shrink-0 w-[180px] sm:w-[220px] md:w-[240px] snap-start"
+            className="flex-shrink-0 w-[155px] sm:w-[190px] md:w-[210px] snap-start"
           >
             <ProductCard product={product} />
           </div>

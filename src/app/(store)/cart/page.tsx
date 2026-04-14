@@ -57,7 +57,13 @@ export default function CartPage() {
       // })
       // -------------------------------------------------------
 
-      // 임시: order-complete 페이지로 이동 (토스 연동 후 위 코드로 대체)
+      // 임시 패스: 토스 연동 전 결제 완료 시뮬레이션 (토스 연동 후 제거)
+      await fetch('/api/checkout/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase().trim() }),
+      })
+
       window.location.href = '/order-complete'
     } catch (err) {
       console.error(err)

@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/lib/cartStore'
@@ -8,11 +7,6 @@ import { useCart } from '@/lib/cartStore'
 export default function Nav() {
   const items = useCart(s => s.items)
   const count = items.reduce((sum, i) => sum + i.quantity, 0)
-  const [hasPurchase, setHasPurchase] = useState(false)
-
-  useEffect(() => {
-    setHasPurchase(!!localStorage.getItem('nca_email'))
-  }, [])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -34,27 +28,17 @@ export default function Nav() {
 
 
 
-          <div className="flex items-center gap-2">
-            {hasPurchase && (
-              <Link
-                href="/order-complete"
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-accent/40 text-accent hover:bg-accent/10 transition-all text-sm"
-              >
-                내 다운로드
-              </Link>
+          <Link
+            href="/cart"
+            className="relative flex items-center gap-2 px-4 py-2 rounded-full border border-border hover:border-border-hover hover:bg-bg-elevated transition-all text-sm"
+          >
+            <span>Cart</span>
+            {count > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-bg-deep text-xs font-bold flex items-center justify-center">
+                {count}
+              </span>
             )}
-            <Link
-              href="/cart"
-              className="relative flex items-center gap-2 px-4 py-2 rounded-full border border-border hover:border-border-hover hover:bg-bg-elevated transition-all text-sm"
-            >
-              <span>Cart</span>
-              {count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-bg-deep text-xs font-bold flex items-center justify-center">
-                  {count}
-                </span>
-              )}
-            </Link>
-          </div>
+          </Link>
         </nav>
       </div>
     </header>

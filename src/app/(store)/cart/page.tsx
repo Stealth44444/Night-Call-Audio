@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/lib/cartStore'
-import { createCart } from '@/lib/shopify'
 import { supabase } from '@/lib/supabase'
 import { Trash2, ShoppingBag, ArrowLeft, Loader2 } from 'lucide-react'
 
@@ -20,13 +19,7 @@ export default function CartPage() {
       return
     }
     if (items.length === 0) {
-      setError('Your cart is empty')
-      return
-    }
-
-    const missingVariant = items.find(i => !i.shopifyVariantId)
-    if (missingVariant) {
-      setError(`"${missingVariant.name}" 제품이 아직 쇼피파이와 연결되지 않았습니다. 고객 지원팀에 문의해 주세요.`)
+      setError('장바구니가 비어있습니다')
       return
     }
 
@@ -34,9 +27,10 @@ export default function CartPage() {
     setError('')
 
     try {
+      // 1. Supabase에 주문 생성
       const orderInserts = items.map(item => ({
         product_id: item.productId,
-        email,
+        email: email.toLowerCase().trim(),
         quantity: item.quantity,
         total_price: item.price * item.quantity,
         status: 'pending',
@@ -45,22 +39,29 @@ export default function CartPage() {
       const { error: orderError } = await supabase.from('orders').insert(orderInserts)
       if (orderError) throw orderError
 
-      const lines = items.map(item => ({
-        merchandiseId: item.shopifyVariantId!,
-        quantity: item.quantity,
-      }))
-
-      const cart = await createCart(lines)
-      clear()
       localStorage.setItem('nca_email', email.toLowerCase().trim())
-      const returnUrl = `${window.location.origin}/order-complete`
-      const checkoutUrl = cart.checkoutUrl.includes('?')
-        ? `${cart.checkoutUrl}&return_url=${encodeURIComponent(returnUrl)}`
-        : `${cart.checkoutUrl}?return_url=${encodeURIComponent(returnUrl)}`
-      window.location.href = checkoutUrl
+      clear()
+
+      // 2. 토스페이먼츠 결제 요청 (연동 시 활성화)
+      // -------------------------------------------------------
+      // const tossPayments = TossPayments(process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!)
+      // await tossPayments.requestPayment('카드', {
+      //   amount: Math.round(total() * 1450),  // USD → KRW 환율 적용
+      //   orderId: `NCA-${Date.now()}`,
+      //   orderName: items.length === 1
+      //     ? items[0].name
+      //     : `${items[0].name} 외 ${items.length - 1}건`,
+      //   customerEmail: email,
+      //   successUrl: `${window.location.origin}/order-complete`,
+      //   failUrl: `${window.location.origin}/cart`,
+      // })
+      // -------------------------------------------------------
+
+      // 임시: order-complete 페이지로 이동 (토스 연동 후 위 코드로 대체)
+      window.location.href = '/order-complete'
     } catch (err) {
       console.error(err)
-      setError('결제 과정에서 오류가 발생했습니다. 다시 시도해 주세요.')
+      setError('결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.')
     } finally {
       setLoading(false)
     }
@@ -196,7 +197,7 @@ export default function CartPage() {
                   <Loader2 size={16} className="animate-spin" /> 처리 중...
                 </span>
               ) : (
-                '쇼피파이로 결제하기'
+                '결제하기'
               )}
             </button>
           </div>

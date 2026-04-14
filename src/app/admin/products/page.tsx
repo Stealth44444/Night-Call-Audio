@@ -34,6 +34,7 @@ export default async function ProductsPage() {
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Category</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Price</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">File Status</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">Actions</th>
             </tr>
           </thead>
@@ -64,7 +65,22 @@ export default async function ProductsPage() {
                     {product.category}
                   </span>
                 </td>
-                <td className="px-6 py-5 font-display font-bold text-accent-bright">${product.price}</td>
+                <td className="px-6 py-5 font-display font-bold text-accent-bright">
+                  {new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(product.price)}
+                </td>
+                <td className="px-6 py-5">
+                  {product.file_path ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-green-500/10 border border-green-500/20 text-green-500">
+                      <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                      Uploaded
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
+                      <div className="w-1 h-1 rounded-full bg-red-500" />
+                      Missing
+                    </span>
+                  )}
+                </td>
                 <td className="px-6 py-5 text-right">
                   <div className="flex justify-end gap-2">
                     <Link

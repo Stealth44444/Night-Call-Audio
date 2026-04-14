@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Product } from '@/lib/products'
 import { Sliders, Music } from 'lucide-react'
@@ -16,6 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const Icon = product.category === 'plugin' ? Sliders : Music
 
   return (
+    <Link href={`/products/${product.id}`} className="block">
     <div className="relative flex flex-col h-full transition-all duration-500 group">
       {/* Image/Visual area */}
       <div className="relative aspect-square w-full mb-4 overflow-visible">
@@ -53,5 +55,6 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
     </div>
+    </Link>
   )
 }

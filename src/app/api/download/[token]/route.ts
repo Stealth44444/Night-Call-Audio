@@ -35,13 +35,7 @@ export async function GET(
     return NextResponse.json({ error: 'not_found', message: 'Product not found' }, { status: 404 })
   }
 
-  // Mark as used
-  await supabaseAdmin
-    .from('download_tokens')
-    .update({ used_at: new Date().toISOString() })
-    .eq('id', downloadToken.id)
-
-  // Generate signed URL
+  // Generate signed URL first
   const { data: signedUrl } = await supabaseAdmin
     .storage
     .from('products')
@@ -50,6 +44,12 @@ export async function GET(
   if (!signedUrl) {
     return NextResponse.json({ error: 'file_error', message: 'File not available' }, { status: 500 })
   }
+
+  // Mark as used only after signed URL is successfully generated
+  await supabaseAdmin
+    .from('download_tokens')
+    .update({ used_at: new Date().toISOString() })
+    .eq('id', downloadToken.id)
 
   return NextResponse.json({
     productName: product.name,

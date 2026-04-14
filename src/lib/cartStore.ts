@@ -7,7 +7,6 @@ export interface CartItem {
   price: number
   quantity: number
   image_url?: string | null
-  shopifyVariantId?: string | null
 }
 
 interface CartState {

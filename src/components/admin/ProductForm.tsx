@@ -2,14 +2,13 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, X, Upload, Info, Link as LinkIcon, FileText, CheckCircle2, Plus } from 'lucide-react'
+import { Save, X, Upload, Info, FileText, CheckCircle2, Plus } from 'lucide-react'
 
 interface ProductFormData {
   name: string
   description: string
   price: string
   category: string
-  shopify_variant_id: string
   file_path: string
   image_url: string
 }
@@ -28,7 +27,6 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
     description: initialData?.description ?? '',
     price: initialData?.price ?? '',
     category: initialData?.category ?? 'plugin',
-    shopify_variant_id: initialData?.shopify_variant_id ?? '',
     file_path: initialData?.file_path ?? '',
     image_url: initialData?.image_url ?? '',
   })
@@ -301,25 +299,6 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
             />
           </div>
 
-          {/* Shopify Sidebar Card */}
-          <div className="glass rounded-3xl p-6 border border-border">
-            <h2 className="font-display font-bold text-lg mb-4 flex items-center gap-2 text-text-primary">
-              <LinkIcon size={18} className="text-accent" /> 쇼피파이 연동
-            </h2>
-            <div className="space-y-3">
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-text-muted mb-1 ml-1">버전 ID</label>
-              <input
-                name="shopify_variant_id"
-                value={form.shopify_variant_id}
-                onChange={handleChange}
-                placeholder="gid://shopify/ProductVariant/..."
-                className="w-full px-3 py-2 bg-black/40 border border-border rounded-lg focus:ring-1 focus:ring-accent outline-none text-[10px] font-mono text-text-primary transition"
-              />
-              <p className="text-[10px] text-text-muted leading-relaxed italic opacity-60">
-                Shopify 관리자에서 생성한 Variant의 GraphQL ID를 입력하세요.
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

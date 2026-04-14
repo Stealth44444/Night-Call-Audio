@@ -30,7 +30,6 @@ export default async function EditProductPage({
           description: product.description ?? '',
           price: String(product.price),
           category: product.category ?? 'plugin',
-          shopify_variant_id: product.shopify_variant_id ?? '',
           file_path: product.file_path ?? '',
           image_url: product.image_url ?? '',
         }}

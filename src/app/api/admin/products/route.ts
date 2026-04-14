@@ -25,8 +25,6 @@ export async function POST(req: NextRequest) {
       category: body.category,
       image_url: body.image_url || null,
       file_path: body.file_path || null,
-      shopify_product_id: body.shopify_product_id || null,
-      shopify_variant_id: body.shopify_variant_id || null,
     })
     .select()
     .single()

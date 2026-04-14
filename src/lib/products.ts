@@ -8,8 +8,6 @@ export interface Product {
   category: string
   image_url: string | null
   file_path: string
-  shopify_product_id: string | null
-  shopify_variant_id: string | null
   created_at: string
   updated_at: string
 }

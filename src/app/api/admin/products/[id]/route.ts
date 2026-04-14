@@ -35,8 +35,6 @@ export async function PUT(
       category: body.category,
       image_url: body.image_url,
       file_path: body.file_path,
-      shopify_product_id: body.shopify_product_id || null,
-      shopify_variant_id: body.shopify_variant_id || null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)

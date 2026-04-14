@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import Link from 'next/link'
 import DeleteButton from '@/components/admin/DeleteButton'
-import { Plus, Edit2, Link as LinkIcon, AlertCircle, ShoppingBag, Package } from 'lucide-react'
+import { Plus, Edit2, ShoppingBag, Package } from 'lucide-react'
 import { getPublicUrl } from '@/lib/storage'
 
 export const dynamic = 'force-dynamic'
@@ -34,7 +34,6 @@ export default async function ProductsPage() {
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Category</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Price</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">Shopify</th>
               <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">Actions</th>
             </tr>
           </thead>
@@ -66,19 +65,6 @@ export default async function ProductsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-5 font-display font-bold text-accent-bright">${product.price}</td>
-                <td className="px-6 py-5 text-center">
-                  <div className="flex justify-center">
-                    {product.shopify_variant_id ? (
-                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Linked
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-nca-pink/10 border border-nca-pink/20 text-nca-pink text-[10px] font-bold uppercase tracking-wider">
-                        <AlertCircle size={10} /> Disconnected
-                      </div>
-                    )}
-                  </div>
-                </td>
                 <td className="px-6 py-5 text-right">
                   <div className="flex justify-end gap-2">
                     <Link

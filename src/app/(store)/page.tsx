@@ -5,6 +5,7 @@ import ChatFAQ from '@/components/ChatFAQ'
 import DAWMarquee from '@/components/DAWMarquee'
 import Link from 'next/link'
 import { getPublicUrl } from '@/lib/storage'
+import ProductCarousel from '@/components/ProductCarousel'
 
 export const revalidate = 60
 
@@ -82,7 +83,7 @@ export default async function HomePage() {
 
           return (
             <section key={section.title} className="animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-              <div className="flex items-end justify-between mb-8 border-b border-border pb-6">
+              <div className="flex items-end justify-between mb-8 border-b border-border pb-6 pr-24">
                 <div>
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-accent">Collection</span>
                   <h2 className="font-display font-bold text-2xl md:text-3xl mt-1.5">{section.title}</h2>
@@ -91,11 +92,7 @@ export default async function HomePage() {
               </div>
 
               {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+                <ProductCarousel products={filteredProducts} />
               ) : (
                 <div className="py-12 text-center border border-dashed border-border rounded-2xl bg-bg-surface/30">
                   <p className="text-sm text-text-muted italic">Soon Available — 준비 중인 컬렉션입니다.</p>

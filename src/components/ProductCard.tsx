@@ -46,10 +46,8 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="font-display font-bold leading-tight text-base md:text-lg text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2 mb-2">
           {product.name}
         </h3>
-
-        <div className="mt-auto flex flex-col items-center md:items-start gap-1">
-          <StarRating rating={4.9} size="sm" />
-          <p className="font-display font-bold text-accent-bright text-xl mt-1 tracking-tight">
+        <div className="mt-auto flex flex-col items-center md:items-start">
+          <p className="font-display font-bold text-accent-bright text-xl tracking-tight">
             {Number(product.price).toLocaleString('ko-KR')}원
           </p>
         </div>

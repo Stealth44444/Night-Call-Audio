@@ -67,10 +67,7 @@ export default function ProductDetail({ product }: { product: Product }) {
               <h1 className="font-display font-extrabold text-4xl md:text-5xl leading-tight">{product.name}</h1>
             </div>
 
-            <div>
-              <div className="mb-3">
-                <StarRating rating={4.9} size="md" showCount count={128} />
-              </div>
+            <div className="pt-2">
               <p className="font-display font-extrabold text-4xl text-accent-bright tracking-tight">
                 {Number(product.price).toLocaleString('ko-KR')}원
               </p>

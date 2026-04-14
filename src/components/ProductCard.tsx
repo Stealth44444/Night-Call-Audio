@@ -49,8 +49,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-auto flex flex-col items-center md:items-start gap-1">
           <StarRating rating={4.9} size="sm" />
-          <p className="font-display font-black text-accent-bright text-lg mt-1">
-            {new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(product.price)}
+          <p className="font-display font-bold text-accent-bright text-xl mt-1 tracking-tight">
+            {Number(product.price).toLocaleString('ko-KR')}원
           </p>
         </div>
       </div>

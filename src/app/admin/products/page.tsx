@@ -65,8 +65,10 @@ export default async function ProductsPage() {
                     {product.category}
                   </span>
                 </td>
-                <td className="px-6 py-5 font-display font-bold text-accent-bright">
-                  {new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(product.price)}
+                <td className="px-6 py-5">
+                  <span className="text-lg font-display font-black text-accent-bright tracking-tight">
+                    {Number(product.price).toLocaleString('ko-KR')}원
+                  </span>
                 </td>
                 <td className="px-6 py-5">
                   {product.file_path ? (

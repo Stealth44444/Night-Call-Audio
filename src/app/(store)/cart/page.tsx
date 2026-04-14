@@ -52,7 +52,12 @@ export default function CartPage() {
 
       const cart = await createCart(lines)
       clear()
-      window.location.href = cart.checkoutUrl
+      localStorage.setItem('nca_email', email.toLowerCase().trim())
+      const returnUrl = `${window.location.origin}/order-complete`
+      const checkoutUrl = cart.checkoutUrl.includes('?')
+        ? `${cart.checkoutUrl}&return_url=${encodeURIComponent(returnUrl)}`
+        : `${cart.checkoutUrl}?return_url=${encodeURIComponent(returnUrl)}`
+      window.location.href = checkoutUrl
     } catch (err) {
       console.error(err)
       setError('결제 과정에서 오류가 발생했습니다. 다시 시도해 주세요.')

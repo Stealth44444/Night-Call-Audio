@@ -41,10 +41,10 @@ export async function GET(request: NextRequest) {
     token: string
     expires_at: string
     used_at: string | null
-    products: { name: string } | null
+    products: { name: string }[] | null
   }) => ({
     token: t.token,
-    productName: t.products?.name ?? 'Unknown Product',
+    productName: t.products?.[0]?.name ?? 'Unknown Product',
     expiresAt: t.expires_at,
     used: !!t.used_at,
   }))

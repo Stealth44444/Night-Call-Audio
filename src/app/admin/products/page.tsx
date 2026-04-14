@@ -65,9 +65,9 @@ export default async function ProductsPage() {
                     {product.category}
                   </span>
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 whitespace-nowrap">
                   <span className="text-lg font-display font-black text-accent-bright tracking-tight">
-                    {Number(product.price).toLocaleString('ko-KR')}원
+                    ₩{Number(product.price).toLocaleString('ko-KR')}
                   </span>
                 </td>
                 <td className="px-6 py-5">

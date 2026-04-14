@@ -16,7 +16,8 @@ export default async function HomePage() {
 
   const sections = [
     { title: 'Artist Vocal Presets', koTitle: '아티스트 보컬 프리셋', filter: (p: any) => p.category === 'preset' && p.name.toLowerCase().includes('vocal') },
-    { title: 'Professional Vocal Mixing Plugins', koTitle: '프로페셔널 보컬 믹싱 플러그인', filter: (p: any) => p.category === 'plugin' },
+    { title: 'Professional Mixing Plugins', koTitle: '프로페셔널 믹싱 플러그인', filter: (p: any) => p.category === 'plugin' },
+    { title: 'Virtual Instruments', koTitle: '가상 악기 컬렉션', filter: (p: any) => p.category === 'instrument' },
     { title: 'Mastering Presets', koTitle: '마스터링 프리셋', filter: (p: any) => p.category === 'preset' && !p.name.toLowerCase().includes('vocal') },
     { title: 'Sample Packs', koTitle: '샘플 팩', filter: (p: any) => p.category === 'sample' },
     { title: 'Bundle & Save', koTitle: '번들 및 할인 세트', filter: (p: any) => p.category === 'bundle' },
@@ -154,9 +155,9 @@ export default async function HomePage() {
             <div className="md:col-span-2">
               <Link
                 href={setupProduct ? `/products/${setupProduct.id}` : '#'}
-                className="w-full md:w-auto inline-flex items-center justify-center px-6 py-2.5 md:px-10 md:py-4 bg-accent text-bg-deep font-display font-black rounded-full hover:bg-accent-bright transition-all duration-300 btn-glow text-sm md:text-base tracking-tight"
+                className="w-full md:w-auto inline-flex items-center justify-center px-6 py-2.5 md:px-10 md:py-4 bg-accent text-bg-deep font-display font-black rounded-full hover:bg-accent-bright transition-all duration-300 btn-glow text-sm md:text-base tracking-tight whitespace-nowrap"
               >
-                {setupProduct ? `₩${setupProduct.price.toLocaleString()} 예약` : '예약하기'}
+                {setupProduct ? `₩${setupProduct.price.toLocaleString('ko-KR')} 예약` : '예약하기'}
               </Link>
             </div>
           </div>

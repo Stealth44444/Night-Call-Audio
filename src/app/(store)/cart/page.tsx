@@ -124,7 +124,7 @@ export default function CartPage() {
 
               <div className="flex-1 min-w-0">
                 <h3 className="font-display font-bold text-lg truncate">{item.name}</h3>
-                <p className="text-sm text-text-secondary mt-0.5">개당 ${item.price}</p>
+                <p className="text-sm text-text-secondary mt-0.5">개당 ₩{item.price.toLocaleString('ko-KR')}</p>
 
                 <div className="mt-3 flex items-center gap-3">
                   <div className="flex items-center border border-border rounded-lg overflow-hidden">
@@ -155,7 +155,7 @@ export default function CartPage() {
               </div>
 
               <div className="text-right shrink-0">
-                <p className="font-display font-bold text-lg text-accent-bright">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-display font-bold text-lg text-accent-bright whitespace-nowrap">₩{(item.price * item.quantity).toLocaleString('ko-KR')}</p>
               </div>
             </div>
           ))}
@@ -169,12 +169,12 @@ export default function CartPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-text-secondary">소계</span>
-                <span className="font-medium">${total().toFixed(2)}</span>
+                <span className="font-medium">₩{total().toLocaleString('ko-KR')}</span>
               </div>
               <div className="border-t border-border my-4" />
               <div className="flex justify-between text-lg">
                 <span className="font-bold">총합</span>
-                <span className="font-display font-extrabold text-accent-bright">${total().toFixed(2)}</span>
+                <span className="font-display font-extrabold text-accent-bright">₩{total().toLocaleString('ko-KR')}</span>
               </div>
             </div>
 

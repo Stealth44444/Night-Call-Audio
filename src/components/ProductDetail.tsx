@@ -68,8 +68,8 @@ export default function ProductDetail({ product }: { product: Product }) {
             </div>
 
             <div className="pt-2">
-              <p className="font-display font-extrabold text-4xl text-accent-bright tracking-tight">
-                {Number(product.price).toLocaleString('ko-KR')}원
+              <p className="font-display font-extrabold text-4xl text-accent-bright tracking-tight whitespace-nowrap">
+                ₩{Number(product.price).toLocaleString('ko-KR')}
               </p>
             </div>
 

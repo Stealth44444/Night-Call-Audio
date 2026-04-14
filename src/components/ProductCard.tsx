@@ -40,18 +40,18 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col text-center md:text-left px-2">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent/80">{product.category}</span>
-          <span className="font-display font-extrabold text-accent-bright text-lg">${product.price}</span>
-        </div>
-
-        <h3 className="font-display font-bold leading-tight text-lg md:text-xl text-text-primary group-hover:text-accent transition-colors duration-300">
+      <div className="flex flex-col flex-grow text-center md:text-left px-2">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-accent/80 mb-1">{product.category}</span>
+        
+        <h3 className="font-display font-bold leading-tight text-base md:text-lg text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2 mb-2">
           {product.name}
         </h3>
 
-        <div className="mt-1.5">
+        <div className="mt-auto flex flex-col items-center md:items-start gap-1">
           <StarRating rating={4.9} size="sm" />
+          <p className="font-display font-black text-accent-bright text-lg mt-1">
+            {new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(product.price)}
+          </p>
         </div>
       </div>
     </div>

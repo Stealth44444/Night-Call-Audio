@@ -10,21 +10,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Email required' }, { status: 400 })
   }
 
-  const { data: orders, error: ordersError } = await supabaseAdmin
+  const { data: allOrders, error: allOrdersError } = await supabaseAdmin
     .from('orders')
-    .select('id')
+    .select('id, status')
     .eq('email', email)
-    .eq('status', 'completed')
 
-  if (ordersError) {
+  if (allOrdersError) {
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 })
   }
 
-  if (!orders || orders.length === 0) {
-    return NextResponse.json({ downloads: [] })
+  if (!allOrders || allOrders.length === 0) {
+    return NextResponse.json({ downloads: [], hasOrders: false })
   }
 
-  const orderIds = orders.map((o: { id: string }) => o.id)
+  const completedOrders = allOrders.filter(o => o.status === 'completed')
+  const hasPendingOrders = allOrders.some(o => o.status === 'pending')
+
+  if (completedOrders.length === 0) {
+    return NextResponse.json({ 
+      downloads: [], 
+      hasOrders: true, 
+      hasPendingOrders 
+    })
+  }
+
+  const orderIds = completedOrders.map((o: { id: string }) => o.id)
 
   const { data: tokens, error: tokensError } = await supabaseAdmin
     .from('download_tokens')

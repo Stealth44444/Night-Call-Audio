@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { ArrowRight, Loader2, Mail, RotateCcw, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, Loader2, Mail, RotateCcw, CheckCircle2, AlertTriangle } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
 
 interface DownloadItem {
@@ -15,7 +15,7 @@ interface DownloadItem {
   used: boolean
 }
 
-type Status = 'order-complete' | 'waiting-email' | 'polling' | 'ready' | 'timeout'
+type Status = 'order-complete' | 'waiting-email' | 'polling' | 'ready' | 'timeout' | 'no-orders'
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleDateString('ko-KR', {
@@ -58,9 +58,12 @@ function OrderCompleteContent() {
           setDownloads(data.downloads)
           setStatus('ready')
           if (pollRef.current) clearInterval(pollRef.current)
+        } else if (data.hasOrders === false) {
+          setStatus('no-orders')
+          if (pollRef.current) clearInterval(pollRef.current)
         } else {
           pollCount.current++
-          if (pollCount.current >= 5) {
+          if (pollCount.current >= 6) {
             setStatus('timeout')
             if (pollRef.current) clearInterval(pollRef.current)
           }
@@ -215,6 +218,34 @@ function OrderCompleteContent() {
         </div>
       )}
 
+      {/* No Orders */}
+      {status === 'no-orders' && (
+        <div className="py-10 border border-border">
+          <div className="px-8">
+            <AlertTriangle size={20} className="text-text-muted mb-5" />
+            <p className="font-display font-bold text-xl mb-3">구매 내역이 없습니다</p>
+            <p className="text-text-secondary text-sm leading-relaxed mb-8">
+              입력하신 이메일({email})로 등록된 주문이 없습니다.<br />
+              이메일 주소를 다시 확인하거나, 쇼핑을 계속해 주세요.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setStatus('waiting-email')}
+                className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent hover:text-accent-bright transition-colors"
+              >
+                다른 이메일 사용
+              </button>
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
+              >
+                쇼핑하러 가기 <ArrowRight size={12} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Timeout */}
       {status === 'timeout' && (
         <div className="py-10 border border-border">
@@ -222,8 +253,8 @@ function OrderCompleteContent() {
             <Mail size={20} className="text-accent mb-5" />
             <p className="font-display font-bold text-xl mb-3">입금 확인 중입니다</p>
             <p className="text-text-secondary text-sm leading-relaxed">
-              입금이 확인되면 이메일로 다운로드 링크를 보내드립니다.
-              처리까지 다소 시간이 걸릴 수 있습니다.
+              입금이 확인되면 이메일로 다운로드 링크를 보내드립니다.<br />
+              확인까지 영업일 기준 최대 24시간이 소요될 수 있습니다.
             </p>
             <button
               onClick={() => startPolling(email)}

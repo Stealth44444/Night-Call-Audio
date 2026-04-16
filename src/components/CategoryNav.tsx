@@ -16,7 +16,7 @@ export default function CategoryNav({ active }: { active: string }) {
   return (
     <div className="sticky top-16 z-40 bg-bg-deep/90 backdrop-blur-md border-b border-border">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-12 md:px-16 lg:px-20">
-        <div className="flex gap-1 overflow-x-auto py-3 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex justify-center gap-1 overflow-x-auto py-3 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {CATEGORIES.map(cat => (
             <Link
               key={cat.key}

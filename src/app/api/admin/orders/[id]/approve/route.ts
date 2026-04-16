@@ -9,10 +9,10 @@ export async function POST(
 ) {
   const { id } = await params
 
-  // 1. Fetch the order
+  // 1. Fetch the order with product name
   const { data: order, error: fetchError } = await supabaseAdmin
     .from('orders')
-    .select('id, product_id, email, total_price, status')
+    .select('id, product_id, email, total_price, status, products(name)')
     .eq('id', id)
     .single()
 
@@ -55,10 +55,15 @@ export async function POST(
   }
 
   // 4. Send email to customer
+  const productRaw = order.products
+  const productName = Array.isArray(productRaw)
+    ? (productRaw[0]?.name as string | undefined)
+    : (productRaw as { name: string } | null)?.name
   try {
     await sendDownloadEmail({
       to: order.email,
       orderNumber: order.id,
+      productName,
       downloadUrl: `${process.env.FRONTEND_URL}/download/${token}`,
       expiresAt,
     })

@@ -102,6 +102,16 @@ export default function DownloadPage({
           </div>
         )}
 
+        {/* PC 권장 안내 */}
+        {(status === 'ready' || status === 'downloading') && (
+          <div className="flex items-start gap-3 mb-5 px-4 py-3 border border-border/50 bg-bg-surface/30 rounded-none">
+            <span className="text-accent text-xs mt-px shrink-0 font-mono">i</span>
+            <p className="text-xs text-text-muted leading-relaxed">
+              파일 다운로드는 <span className="text-text-secondary font-medium">PC 또는 노트북</span> 환경을 권장합니다. 모바일에서는 파일이 정상적으로 저장되지 않을 수 있습니다.
+            </p>
+          </div>
+        )}
+
         {/* Ready / Downloading */}
         {(status === 'ready' || status === 'downloading') && (
           <div className="border border-border bg-bg-deep/40">

@@ -29,7 +29,7 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-4">스토어</h4>
             <div className="flex flex-col gap-2">
               <Link href="/" className="text-sm text-text-secondary hover:text-text-primary transition-colors">모든 제품</Link>
-              <Link href="/cart" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Cart</Link>
+              <Link href="/cart" className="text-sm text-text-secondary hover:text-text-primary transition-colors">장바구니</Link>
             </div>
           </div>
 

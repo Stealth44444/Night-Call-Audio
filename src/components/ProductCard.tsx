@@ -5,6 +5,14 @@ import { Sliders, Music } from 'lucide-react'
 import { getPublicUrl } from '@/lib/storage'
 import StarRating from './StarRating'
 
+const categoryLabels: Record<string, string> = {
+  plugin:     '믹싱 플러그인',
+  preset:     '프리셋',
+  instrument: '가상 악기',
+  sample:     '샘플 팩',
+  bundle:     '번들',
+}
+
 const categoryGradients: Record<string, string> = {
   plugin: 'from-[#764105]/40 via-[#1818E7]/20 to-[#FF299B]/10',
   preset: 'from-[#1818E7]/40 via-[#FF299B]/20 to-[#764105]/10',
@@ -42,7 +50,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Content */}
       <div className="flex flex-col flex-grow text-center md:text-left px-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-accent/80 mb-1">{product.category}</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-accent/80 mb-1">{categoryLabels[product.category] ?? product.category}</span>
         
         <h3 className="font-display font-bold leading-tight text-base md:text-lg text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2 mb-2 min-h-[2.5rem] md:min-h-[3rem]">
           {product.name}

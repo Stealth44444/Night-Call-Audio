@@ -40,7 +40,7 @@ export default function Nav() {
               href="/cart"
               className="relative flex items-center gap-2 px-4 py-2 rounded-full border border-border hover:border-border-hover hover:bg-bg-elevated transition-all text-sm whitespace-nowrap"
             >
-              <span>Cart</span>
+              <span>장바구니</span>
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-bg-deep text-xs font-bold flex items-center justify-center">
                   {count}

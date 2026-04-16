@@ -17,21 +17,22 @@ const daws = [
 
 function DAWLogo({ name, maker, logo, filter }: { name: string; maker: string; logo: string | null; filter?: string }) {
   return (
-    <div className="flex-shrink-0 flex items-center gap-3 px-6 py-3 rounded-2xl border border-white/[0.04] bg-white/[0.02] select-none">
+    <div className="flex-shrink-0 flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl border border-white/[0.04] bg-white/[0.02] select-none">
       {logo && (
-        <Image
-          src={logo}
-          alt={name}
-          width={28}
-          height={28}
-          className="object-contain"
-          style={filter ? { filter } : undefined}
-        />
+        <div className="relative w-5 h-5 sm:w-7 sm:h-7">
+          <Image
+            src={logo}
+            alt={name}
+            fill
+            className="object-contain"
+            style={filter ? { filter } : undefined}
+          />
+        </div>
       )}
-      <span className="font-display font-bold text-base text-white/80 whitespace-nowrap">
+      <span className="font-display font-bold text-sm sm:text-base text-white/80 whitespace-nowrap">
         {name}
       </span>
-      <span className="text-xs text-white/25 whitespace-nowrap">{maker}</span>
+      <span className="text-[10px] sm:text-xs text-white/25 whitespace-nowrap">{maker}</span>
     </div>
   )
 }

@@ -68,10 +68,10 @@ export default async function HomePage() {
       </section>
 
       {/* COMPATIBLE DAWs */}
-      <section className="relative pt-24 pb-20 overflow-hidden bg-gradient-to-b from-bg-deep/0 to-bg-deep">
-        <div className="max-w-7xl mx-auto px-6 text-center mb-12">
-          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Compatibility</span>
-          <h2 className="font-display font-bold text-3xl md:text-4xl mt-2">
+      <section className="relative pt-12 pb-10 sm:pt-24 sm:pb-20 overflow-hidden bg-gradient-to-b from-bg-deep/0 to-bg-deep">
+        <div className="max-w-7xl mx-auto px-6 text-center mb-6 sm:mb-12">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-accent">Compatibility</span>
+          <h2 className="font-display font-bold text-xl sm:text-3xl md:text-4xl mt-2">
             Compatible With All DAWs
           </h2>
         </div>

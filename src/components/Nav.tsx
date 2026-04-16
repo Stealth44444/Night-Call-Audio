@@ -6,7 +6,7 @@ import { useCart } from '@/lib/cartStore'
 
 export default function Nav() {
   const items = useCart(s => s.items)
-  const count = items.reduce((sum, i) => sum + i.quantity, 0)
+  const count = items.length
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">

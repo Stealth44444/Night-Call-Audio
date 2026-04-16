@@ -8,6 +8,7 @@ import { LayoutDashboard, ShoppingCart, Package, ExternalLink, LogOut } from 'lu
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

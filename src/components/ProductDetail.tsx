@@ -10,7 +10,6 @@ import { getPublicUrl } from '@/lib/storage'
 import StarRating from './StarRating'
 
 export default function ProductDetail({ product }: { product: Product }) {
-  const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
   const addItem = useCart(s => s.addItem)
 
@@ -19,7 +18,6 @@ export default function ProductDetail({ product }: { product: Product }) {
       productId: product.id,
       name: product.name,
       price: product.price,
-      quantity,
       image_url: getPublicUrl(product.image_url),
     })
     setAdded(true)
@@ -77,27 +75,6 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-text-muted font-medium">수량</span>
-              <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-colors"
-                >
-                  -
-                </button>
-                <span className="w-12 h-10 flex items-center justify-center font-mono text-sm border-x border-border">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(q => Math.min(10, q + 1))}
-                  className="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-colors"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
             <button
               onClick={handleAddToCart}
               className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 btn-glow relative z-10 ${

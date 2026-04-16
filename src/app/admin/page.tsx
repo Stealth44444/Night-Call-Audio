@@ -20,8 +20,8 @@ export default async function AdminDashboard() {
 
   const stats = [
     { label: 'Total Products', value: productCount ?? 0, href: '/admin/products', icon: Package, color: 'text-accent' },
-    { label: 'Total Orders', value: orderCount ?? 0, href: '#', icon: ShoppingCart, color: 'text-nca-blue-bright' },
-    { label: 'Pending Orders', value: pendingCount ?? 0, href: '#', icon: Activity, color: 'text-nca-pink' },
+    { label: 'Total Orders', value: orderCount ?? 0, href: '/admin/orders/all', icon: ShoppingCart, color: 'text-nca-blue-bright' },
+    { label: 'Pending Orders', value: pendingCount ?? 0, href: '/admin/orders', icon: Activity, color: 'text-nca-pink' },
   ]
 
   return (

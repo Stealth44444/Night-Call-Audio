@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Loader2, Mail, RotateCcw } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { ArrowRight, Loader2, Mail, RotateCcw, CheckCircle2 } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
 
 interface DownloadItem {
@@ -14,7 +15,7 @@ interface DownloadItem {
   used: boolean
 }
 
-type Status = 'waiting-email' | 'polling' | 'ready' | 'timeout'
+type Status = 'order-complete' | 'waiting-email' | 'polling' | 'ready' | 'timeout'
 
 function fmt(iso: string) {
   return new Date(iso).toLocaleDateString('ko-KR', {
@@ -33,10 +34,13 @@ function fmtShort(iso: string) {
 }
 
 export default function OrderCompletePage() {
+  const searchParams = useSearchParams()
+  const isNewOrder = searchParams.get('new') === '1'
+
   const [email, setEmail] = useState('')
   const [inputEmail, setInputEmail] = useState('')
   const [downloads, setDownloads] = useState<DownloadItem[]>([])
-  const [status, setStatus] = useState<Status>('waiting-email')
+  const [status, setStatus] = useState<Status>(isNewOrder ? 'order-complete' : 'waiting-email')
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pollCount = useRef(0)
 
@@ -55,14 +59,14 @@ export default function OrderCompletePage() {
           if (pollRef.current) clearInterval(pollRef.current)
         } else {
           pollCount.current++
-          if (pollCount.current >= 20) {
+          if (pollCount.current >= 5) {
             setStatus('timeout')
             if (pollRef.current) clearInterval(pollRef.current)
           }
         }
       } catch {
         pollCount.current++
-        if (pollCount.current >= 20) {
+        if (pollCount.current >= 5) {
           setStatus('timeout')
           if (pollRef.current) clearInterval(pollRef.current)
         }
@@ -70,10 +74,13 @@ export default function OrderCompletePage() {
     }
 
     fetchDownloads()
-    pollRef.current = setInterval(fetchDownloads, 3000)
+    pollRef.current = setInterval(fetchDownloads, 2000)
   }, [])
 
   useEffect(() => {
+    // 새 주문 직후에는 폴링하지 않음
+    if (isNewOrder) return
+
     const stored = localStorage.getItem('nca_email')
     if (stored) {
       setEmail(stored)
@@ -82,7 +89,13 @@ export default function OrderCompletePage() {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
     }
-  }, [startPolling])
+  }, [startPolling, isNewOrder])
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [])
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -113,12 +126,64 @@ export default function OrderCompletePage() {
             Night Call Audio
           </p>
           <h1 className="font-display font-extrabold text-4xl leading-none tracking-tight">
-            {status === 'ready' ? '구매 내역' : '내 다운로드'}
+            {status === 'ready' ? '구매 내역' : status === 'order-complete' ? '주문 완료' : '내 다운로드'}
           </h1>
-          {status === 'ready' && (
+          {(status === 'ready' || status === 'polling' || status === 'timeout') && email && (
             <p className="text-text-muted text-sm mt-2 font-mono">{email}</p>
           )}
         </div>
+
+        {/* 주문 완료 (새 주문 직후) */}
+        {status === 'order-complete' && (
+          <div className="space-y-6">
+            <div className="flex items-start gap-4 py-6 border-y border-border">
+              <CheckCircle2 size={22} className="text-accent mt-0.5 shrink-0" />
+              <div className="space-y-1">
+                <p className="font-display font-bold text-lg">주문이 접수되었습니다</p>
+                <p className="text-text-secondary text-sm leading-relaxed">
+                  입금 확인 후 이 페이지에서 다운로드할 수 있습니다.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-bg-deep/60 border border-border/60 rounded-xl px-5 py-4 space-y-2">
+              <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-text-muted mb-3">안내</p>
+              {[
+                '입금 확인 후 이메일로 다운로드 링크를 발송합니다.',
+                '처리까지 영업일 기준 1~2일이 소요될 수 있습니다.',
+                '문의사항은 이메일로 연락해 주세요.',
+              ].map((text, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <span className="text-accent text-xs mt-px shrink-0">—</span>
+                  <p className="text-xs text-text-secondary">{text}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => {
+                  const stored = localStorage.getItem('nca_email') ?? ''
+                  if (stored) {
+                    setEmail(stored)
+                    startPolling(stored)
+                  } else {
+                    setStatus('waiting-email')
+                  }
+                }}
+                className="flex items-center gap-2 px-5 py-2.5 border border-border rounded-xl text-xs font-bold text-text-secondary hover:text-text-primary hover:border-border-hover transition-all"
+              >
+                <RotateCcw size={13} /> 다운로드 확인
+              </button>
+              <Link
+                href="/"
+                className="flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-text-muted hover:text-text-primary transition-colors"
+              >
+                쇼핑 계속하기 <ArrowRight size={13} />
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Waiting for email */}
         {status === 'waiting-email' && (
@@ -174,10 +239,10 @@ export default function OrderCompletePage() {
           <div className="py-10 border border-border">
             <div className="px-8">
               <Mail size={20} className="text-accent mb-5" />
-              <p className="font-display font-bold text-xl mb-3">이메일을 확인하세요</p>
+              <p className="font-display font-bold text-xl mb-3">입금 확인 중입니다</p>
               <p className="text-text-secondary text-sm leading-relaxed">
-                결제 확인 후 다운로드 링크를 이메일로 발송했습니다.
-                잠시 후 다시 시도하거나 받은 편지함을 확인해주세요.
+                입금이 확인되면 이메일로 다운로드 링크를 보내드립니다.
+                처리까지 다소 시간이 걸릴 수 있습니다.
               </p>
               <button
                 onClick={() => startPolling(email)}

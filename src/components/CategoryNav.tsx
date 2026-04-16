@@ -14,7 +14,7 @@ const CATEGORIES = [
 
 export default function CategoryNav({ active }: { active: string }) {
   return (
-    <div className="sticky top-16 z-40 border-b border-border" style={{ background: 'rgba(10,10,10,0.6)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
+    <div className="sticky top-16 z-40 bg-bg-deep/90 backdrop-blur-md border-b border-border">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-12 md:px-16 lg:px-20">
         <div className="flex justify-center gap-1 overflow-x-auto py-3 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {CATEGORIES.map(cat => (

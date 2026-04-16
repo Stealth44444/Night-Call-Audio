@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Package, ExternalLink, Menu, X, Clock, List } from 'lucide-react'
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin', label: '대시보드', icon: LayoutDashboard },
+  { href: '/admin/products', label: '제품', icon: Package },
   { href: '/admin/orders', label: '승인 대기', icon: Clock },
   { href: '/admin/orders/all', label: '전체 주문', icon: List },
 ]

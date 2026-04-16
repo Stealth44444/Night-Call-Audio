@@ -191,7 +191,7 @@ export default function AdminDashboard() {
     ? [
         {
           key: 'total',
-          sublabel: 'Total Revenue',
+          sublabel: '누적 매출',
           label: '누적 매출',
           value: data.totalRevenue,
           fmt: fmtKrw,
@@ -200,7 +200,7 @@ export default function AdminDashboard() {
         },
         {
           key: 'month',
-          sublabel: 'Month to Date',
+          sublabel: '이번 달 매출',
           label: '이번 달',
           value: data.monthRevenue,
           fmt: fmtKrw,
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
         },
         {
           key: 'aov',
-          sublabel: 'Avg. Order Value',
+          sublabel: '평균 주문액',
           label: '평균 주문액',
           value: data.aov,
           fmt: fmtKrw,
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
         },
         {
           key: 'pending',
-          sublabel: 'Pending Approval',
+          sublabel: '승인 대기',
           label: '승인 대기',
           value: data.pendingCount,
           fmt: fmtCount,
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
         <div>
           <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-text-muted mb-0.5">Night Call Audio</p>
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-text-primary tracking-tight">
-            Dashboard
+            대시보드
           </h1>
         </div>
         <button
@@ -302,7 +302,7 @@ export default function AdminDashboard() {
           <div className="border border-border bg-bg-elevated/20 p-5 sm:p-6">
             <div className="flex items-start justify-between mb-5">
               <div>
-                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">Sales Trend</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">매출 추이</p>
                 <p className="font-display font-bold text-base sm:text-lg text-text-primary">매출 추이</p>
               </div>
               <div className="flex border border-border overflow-hidden shrink-0">
@@ -316,7 +316,7 @@ export default function AdminDashboard() {
                         : 'text-text-muted hover:text-text-primary hover:bg-bg-elevated'
                     }`}
                   >
-                    {p}
+                    {p === '7d' ? '7일' : '30일'}
                   </button>
                 ))}
               </div>
@@ -329,7 +329,7 @@ export default function AdminDashboard() {
 
             {/* Top products */}
             <div className="lg:col-span-3 border border-border bg-bg-elevated/20 p-5 sm:p-6">
-              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">Best Sellers</p>
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">베스트셀러</p>
               <p className="font-display font-bold text-base sm:text-lg text-text-primary mb-6">
                 베스트셀러 TOP {data.topProducts.length}
               </p>
@@ -372,7 +372,7 @@ export default function AdminDashboard() {
 
               {/* Category breakdown */}
               <div className="border border-border bg-bg-elevated/20 p-5 sm:p-6 flex-1">
-                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">Category</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-1">카테고리</p>
                 <p className="font-display font-bold text-base text-text-primary mb-5">카테고리별 매출</p>
 
                 {data.categoryBreakdown.length === 0 ? (
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
 
               {/* Operational stats */}
               <div className="border border-border bg-bg-elevated/20 p-5 sm:p-6">
-                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-4">Operational</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-4">운영 현황</p>
                 <div className="space-y-3">
                   <div className="flex items-baseline justify-between">
                     <span className="text-xs text-text-secondary">평균 승인 대기</span>
@@ -411,7 +411,7 @@ export default function AdminDashboard() {
                         ? '—'
                         : data.avgWaitHours < 1
                         ? `${Math.round(data.avgWaitHours * 60)}분`
-                        : `${data.avgWaitHours.toFixed(1)}h`}
+                        : `${data.avgWaitHours.toFixed(1)}시간`}
                     </span>
                   </div>
                   <div className="h-px bg-border" />
@@ -438,7 +438,7 @@ export default function AdminDashboard() {
 
           {/* ── Quick actions ─────────────────────────────────────────────── */}
           <div className="border border-border bg-bg-elevated/20 p-5 sm:p-6">
-            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-4">Quick Actions</p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted mb-4">빠른 작업</p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/admin/products/new"

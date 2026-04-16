@@ -4,7 +4,7 @@ import { sendAdminNotificationEmail } from '@/lib/email'
 export async function POST(request: NextRequest) {
   const adminEmail = process.env.ADMIN_EMAIL
   if (!adminEmail) {
-    // Silently succeed — no admin email configured yet
+    console.warn('[notify] ADMIN_EMAIL env var is not set — skipping admin notification')
     return NextResponse.json({ ok: true })
   }
 

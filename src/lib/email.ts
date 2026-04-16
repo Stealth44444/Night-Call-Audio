@@ -30,14 +30,27 @@ function emailWrapper(content: string): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Night Call Audio</title>
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap');
     .syne { font-family: 'Syne', Arial, sans-serif !important; }
+
+    /* 다크모드: 클라이언트가 배경을 흰색으로 뒤집지 않도록 강제 고정 */
+    @media (prefers-color-scheme: dark) {
+      body, .body-bg { background-color: #0a0a0a !important; }
+      .email-outer  { background-color: #0a0a0a !important; }
+      .email-card   { background-color: #141414 !important; border-color: #252525 !important; }
+      .email-text   { color: #e8e8e8 !important; }
+      .email-muted  { color: #888888 !important; }
+      .email-dim    { color: #555555 !important; }
+      .email-footer { color: #444444 !important; }
+    }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a">
+<body class="body-bg" style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table class="email-outer" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a">
     <tr>
       <td align="center" style="padding:40px 16px;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
@@ -61,7 +74,7 @@ function emailWrapper(content: string): string {
 
           <!-- Card -->
           <tr>
-            <td bgcolor="#141414" style="border-radius:16px;border:1px solid #252525;overflow:hidden;">
+            <td class="email-card" bgcolor="#141414" style="border-radius:16px;border:1px solid #252525;overflow:hidden;">
               <!-- Accent top line -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
@@ -82,10 +95,10 @@ function emailWrapper(content: string): string {
           <!-- Footer -->
           <tr>
             <td style="padding-top:28px;padding-bottom:8px;">
-              <p style="margin:0 0 6px;font-size:11px;color:#444444;text-align:center;letter-spacing:0.05em;">
+              <p class="email-footer" style="margin:0 0 6px;font-size:11px;color:#444444;text-align:center;letter-spacing:0.05em;">
                 © Night Call Audio · All rights reserved
               </p>
-              <p style="margin:0;font-size:11px;color:#333333;text-align:center;letter-spacing:0.05em;">
+              <p class="email-footer" style="margin:0;font-size:11px;color:#333333;text-align:center;letter-spacing:0.05em;">
                 문의: ${escapeHtml(process.env.SMTP_FROM ?? '')}
               </p>
             </td>
@@ -110,10 +123,10 @@ function infoRow(label: string, value: string, accent = false): string {
   return `
 <tr>
   <td style="padding:10px 0;border-bottom:1px solid #1e1e1e;width:110px;vertical-align:top;">
-    <span style="font-size:10px;color:#555555;letter-spacing:0.12em;text-transform:uppercase;">${label}</span>
+    <span class="email-dim" style="font-size:10px;color:#555555;letter-spacing:0.12em;text-transform:uppercase;">${label}</span>
   </td>
   <td style="padding:10px 0 10px 16px;border-bottom:1px solid #1e1e1e;vertical-align:top;">
-    <span style="font-size:13px;font-weight:600;color:${accent ? '#c8962e' : '#e8e8e8'};">${value}</span>
+    <span class="${accent ? '' : 'email-text'}" style="font-size:13px;font-weight:600;color:${accent ? '#c8962e' : '#e8e8e8'};">${value}</span>
   </td>
 </tr>`
 }
@@ -129,7 +142,7 @@ function noticeRow(text: string): string {
           <span style="font-size:11px;color:#444444;">—</span>
         </td>
         <td style="padding-left:6px;">
-          <span style="font-size:11px;color:#555555;line-height:1.6;">${text}</span>
+          <span class="email-dim" style="font-size:11px;color:#555555;line-height:1.6;">${text}</span>
         </td>
       </tr>
     </table>

@@ -267,9 +267,9 @@ function DownloadCard({ item, index }: { item: DownloadItem; index: number }) {
       <div className="flex items-stretch">
         <div className="w-0.5 bg-accent shrink-0 self-stretch" />
         {item.productImage && (
-          <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden self-stretch">
+          <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center self-center ml-4 sm:ml-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.productImage} alt="" className="w-full h-full object-cover" />
+            <img src={item.productImage} alt="" className="w-full h-full object-contain" />
           </div>
         )}
         <div className="flex-1 min-w-0 px-5 py-5">

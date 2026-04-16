@@ -37,6 +37,14 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-4">고객 지원</h4>
             <div className="flex flex-col gap-2">
               <span className="text-sm text-text-secondary">stealth12345789@gmail.com</span>
+              <a 
+                href="https://instagram.com/nightcall_audio" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm text-text-secondary hover:text-accent transition-colors"
+              >
+                Instagram @nightcall_audio
+              </a>
             </div>
           </div>
         </div>

@@ -121,7 +121,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-8 md:px-16 lg:px-20 py-12">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 md:px-16 lg:px-20 py-12">
       <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors mb-10">
         <ArrowLeft size={16} /> 쇼핑 계속하기
       </Link>
@@ -139,14 +139,14 @@ export default function CartPage() {
                 <div className="w-0.5 bg-accent shrink-0 self-stretch" />
 
                 {/* Thumbnail */}
-                <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden self-stretch bg-bg-elevated flex items-center justify-center">
+                <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center self-center ml-4 sm:ml-6">
                   {item.image_url ? (
                     <Image
                       src={item.image_url}
                       alt={item.name}
                       width={112}
                       height={112}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <ShoppingBag size={20} className="text-text-muted" />
@@ -154,28 +154,30 @@ export default function CartPage() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0 px-5 py-4">
-                  <p className="font-display font-extrabold text-lg leading-tight truncate mb-3 tracking-tight">
+                <div className="flex-1 min-w-0 px-5 py-5 sm:py-6">
+                  <p className="font-display font-extrabold text-base sm:text-lg leading-tight line-clamp-2 mb-3 tracking-tight">
                     {item.name}
                   </p>
-
+                  
                   {/* Dashed divider */}
                   <div className="border-t border-dashed border-border mb-3" />
 
                   {/* Price */}
                   <div>
-                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted block mb-0.5">가격</span>
-                    <span className="font-display font-extrabold text-sm text-accent-bright">₩{item.price.toLocaleString('ko-KR')}</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted block mb-0.5">Price</span>
+                    <span className="font-display font-extrabold text-sm sm:text-base text-accent-bright">
+                      ₩{item.price.toLocaleString('ko-KR')}
+                    </span>
                   </div>
                 </div>
 
                 {/* Delete action */}
-                <div className="flex items-center px-4 shrink-0 border-l border-border">
+                <div className="flex items-center px-4 sm:px-6 shrink-0 border-l border-border">
                   <button
                     onClick={() => removeItem(item.productId)}
-                    className="w-8 h-8 flex items-center justify-center text-text-muted hover:text-red-400 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-text-muted hover:text-red-400 transition-colors"
                   >
-                    <Trash2 size={15} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
 

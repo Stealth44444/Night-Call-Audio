@@ -123,9 +123,9 @@ export default function DownloadPage({
 
               {/* Thumbnail */}
               {productImage && (
-                <div className="w-16 h-16 sm:w-40 sm:h-40 shrink-0 overflow-hidden self-stretch">
+                <div className="w-16 h-16 sm:w-40 sm:h-40 shrink-0 flex items-center justify-center self-center ml-4 sm:ml-7">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={productImage} alt="" className="w-full h-full object-cover" />
+                  <img src={productImage} alt="" className="w-full h-full object-contain" />
                 </div>
               )}
 

@@ -55,12 +55,14 @@ export default async function HomePage() {
             >
               제품 둘러보기
             </Link>
-            <Link
-              href="#sections"
+            <a
+              href="https://instagram.com/nightcall_audio"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-8 py-3.5 border border-border rounded-full text-sm font-medium text-text-secondary hover:text-text-primary hover:border-border-hover transition-all"
             >
-              커뮤니티 가기
-            </Link>
+              인스타그램
+            </a>
           </div>
         </div>
       </section>
@@ -78,7 +80,7 @@ export default async function HomePage() {
 
 
       {/* PRODUCT SECTIONS */}
-      <div id="sections" className="max-w-[1600px] mx-auto px-8 md:px-16 lg:px-20 py-12 space-y-24">
+      <div id="sections" className="max-w-[1600px] mx-auto px-4 sm:px-12 md:px-16 lg:px-20 py-12 space-y-24">
         {sections.map((section, idx) => {
           const filteredProducts = allProducts.filter(section.filter)
 

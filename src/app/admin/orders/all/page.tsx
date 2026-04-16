@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Loader2, ShoppingCart, RefreshCw, Trash2 } from 'lucide-react'
+import { Loader2, ShoppingCart, RefreshCw, Trash2, Clock, Download } from 'lucide-react'
 
 interface Order {
   id: string
@@ -11,6 +11,7 @@ interface Order {
   paymentMethod: string | null
   status: string
   createdAt: string
+  tokenExpiresAt: string | null
 }
 
 type Filter = 'all' | 'pending' | 'completed'
@@ -26,6 +27,16 @@ function fmt(iso: string) {
     month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit',
   })
+}
+
+function fmtExpiry(iso: string | null) {
+  if (!iso) return null
+  const d = new Date(iso)
+  const expired = d < new Date()
+  return {
+    label: d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }),
+    expired,
+  }
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -48,9 +59,7 @@ function StatusBadge({ status }: { status: string }) {
 function DeleteControl({ onDelete, loading }: { onDelete: () => void; loading: boolean }) {
   const [confirm, setConfirm] = useState(false)
 
-  if (loading) {
-    return <Loader2 size={15} className="animate-spin text-text-muted" />
-  }
+  if (loading) return <Loader2 size={15} className="animate-spin text-text-muted" />
 
   if (confirm) {
     return (
@@ -82,6 +91,78 @@ function DeleteControl({ onDelete, loading }: { onDelete: () => void; loading: b
   )
 }
 
+function ExtendButton({
+  orderId,
+  expiresAt,
+  onExtended,
+}: {
+  orderId: string
+  expiresAt: string | null
+  onExtended: (newExpiry: string) => void
+}) {
+  const [loading, setLoading] = useState(false)
+  const expiry = fmtExpiry(expiresAt)
+
+  const handleExtend = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/extend-token`, { method: 'PATCH' })
+      if (res.ok) {
+        const data = await res.json()
+        onExtended(data.expiresAt)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!expiresAt) return <span className="text-[11px] text-text-muted">—</span>
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`text-[11px] font-mono ${expiry?.expired ? 'text-red-400' : 'text-text-muted'}`}>
+        {expiry?.expired ? '만료 ' : ''}{expiry?.label}
+      </span>
+      <button
+        onClick={handleExtend}
+        disabled={loading}
+        className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-muted hover:text-accent hover:border-accent/40 transition-all disabled:opacity-40"
+        title="+7일 연장"
+      >
+        {loading ? <Loader2 size={10} className="animate-spin" /> : <Clock size={10} />}
+        +7일
+      </button>
+    </div>
+  )
+}
+
+function exportCSV(orders: Order[]) {
+  const header = ['주문ID', '고객 이메일', '상품명', '금액', '결제수단', '상태', '주문일시', '다운로드 만료일']
+  const rows = orders.map(o => [
+    o.id,
+    o.email,
+    o.productName,
+    o.totalPrice.toString(),
+    paymentLabel(o.paymentMethod),
+    o.status === 'completed' ? '완료' : '대기중',
+    new Date(o.createdAt).toLocaleString('ko-KR'),
+    o.tokenExpiresAt ? new Date(o.tokenExpiresAt).toLocaleString('ko-KR') : '',
+  ])
+
+  const csv = [header, ...rows]
+    .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+
+  const bom = '\uFEFF' // Excel UTF-8 BOM
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `nca-orders-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function AdminOrdersAllPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -109,14 +190,14 @@ export default function AdminOrdersAllPage() {
     setDeletingId(id)
     try {
       const res = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' })
-      if (res.ok) {
-        setOrders(prev => prev.filter(o => o.id !== id))
-      }
-    } catch {
-      // silently fail — item stays in list
+      if (res.ok) setOrders(prev => prev.filter(o => o.id !== id))
     } finally {
       setDeletingId(null)
     }
+  }
+
+  const handleExtended = (orderId: string, newExpiry: string) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, tokenExpiresAt: newExpiry } : o))
   }
 
   const filtered = orders.filter(o => {
@@ -138,13 +219,23 @@ export default function AdminOrdersAllPage() {
           <h1 className="font-display font-bold text-2xl sm:text-3xl text-text-primary">전체 주문</h1>
           <p className="text-sm text-text-secondary mt-1">모든 주문 내역</p>
         </div>
-        <button
-          onClick={fetchOrders}
-          className="inline-flex items-center gap-2 px-3 py-2 text-sm text-text-muted hover:text-text-primary border border-border rounded-xl hover:border-border-hover transition-all"
-        >
-          <RefreshCw size={14} />
-          <span className="hidden sm:inline">새로고침</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportCSV(filtered)}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-text-muted hover:text-text-primary border border-border rounded-xl hover:border-border-hover transition-all"
+            title="CSV 내보내기"
+          >
+            <Download size={14} />
+            <span className="hidden sm:inline">CSV 내보내기</span>
+          </button>
+          <button
+            onClick={fetchOrders}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-text-muted hover:text-text-primary border border-border rounded-xl hover:border-border-hover transition-all"
+          >
+            <RefreshCw size={14} />
+            <span className="hidden sm:inline">새로고침</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter tabs */}
@@ -182,33 +273,43 @@ export default function AdminOrdersAllPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-bg-elevated/50 border-b border-border">
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">상태</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">고객</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">상품</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">금액</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">결제</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">주문 시각</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">삭제</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">상태</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">고객</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">상품</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">금액</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">결제</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">주문일시</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">다운로드 만료</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">삭제</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map(order => (
                   <tr key={order.id} className="group hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-5"><StatusBadge status={order.status} /></td>
-                    <td className="px-6 py-5 font-mono text-sm text-text-primary">{order.email}</td>
-                    <td className="px-6 py-5 text-sm text-text-secondary">{order.productName}</td>
-                    <td className="px-6 py-5 font-display font-bold text-accent-bright whitespace-nowrap">
+                    <td className="px-5 py-4"><StatusBadge status={order.status} /></td>
+                    <td className="px-5 py-4 font-mono text-sm text-text-primary">{order.email}</td>
+                    <td className="px-5 py-4 text-sm text-text-secondary max-w-[180px] truncate">{order.productName}</td>
+                    <td className="px-5 py-4 font-display font-bold text-accent-bright whitespace-nowrap">
                       ₩{order.totalPrice.toLocaleString('ko-KR')}
                     </td>
-                    <td className="px-6 py-5">
-                      <span className="inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary">
+                    <td className="px-5 py-4">
+                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary">
                         {paymentLabel(order.paymentMethod)}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-sm text-text-muted whitespace-nowrap">
-                      {new Date(order.createdAt).toLocaleString('ko-KR')}
+                    <td className="px-5 py-4 text-sm text-text-muted whitespace-nowrap">{fmt(order.createdAt)}</td>
+                    <td className="px-5 py-4">
+                      {order.status === 'completed' ? (
+                        <ExtendButton
+                          orderId={order.id}
+                          expiresAt={order.tokenExpiresAt}
+                          onExtended={(exp) => handleExtended(order.id, exp)}
+                        />
+                      ) : (
+                        <span className="text-[11px] text-text-muted">—</span>
+                      )}
                     </td>
-                    <td className="px-6 py-5 text-right">
+                    <td className="px-5 py-4 text-right">
                       <DeleteControl
                         loading={deletingId === order.id}
                         onDelete={() => handleDelete(order.id)}
@@ -234,7 +335,7 @@ export default function AdminOrdersAllPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
                     <StatusBadge status={order.status} />
                     <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary">
@@ -249,6 +350,19 @@ export default function AdminOrdersAllPage() {
                     />
                   </div>
                 </div>
+
+                {order.status === 'completed' && (
+                  <div className="pt-1 border-t border-border">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">다운로드 만료</span>
+                      <ExtendButton
+                        orderId={order.id}
+                        expiresAt={order.tokenExpiresAt}
+                        onExtended={(exp) => handleExtended(order.id, exp)}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -18,14 +18,18 @@ export async function GET() {
   }
 
   const productIds = [...new Set(orders.map((o: { product_id: string }) => o.product_id))]
+  const orderIds = orders.map((o: { id: string }) => o.id)
 
-  const { data: products } = await supabaseAdmin
-    .from('products')
-    .select('id, name')
-    .in('id', productIds)
+  const [{ data: products }, { data: tokens }] = await Promise.all([
+    supabaseAdmin.from('products').select('id, name').in('id', productIds),
+    supabaseAdmin.from('download_tokens').select('order_id, expires_at').in('order_id', orderIds),
+  ])
 
   const productMap = new Map(
     (products ?? []).map((p: { id: string; name: string }) => [p.id, p.name])
+  )
+  const tokenMap = new Map(
+    (tokens ?? []).map((t: { order_id: string; expires_at: string }) => [t.order_id, t.expires_at])
   )
 
   const enriched = orders.map((o: {
@@ -44,6 +48,7 @@ export async function GET() {
     paymentMethod: o.payment_method,
     status: o.status,
     createdAt: o.created_at,
+    tokenExpiresAt: tokenMap.get(o.id) ?? null,
   }))
 
   return NextResponse.json({ orders: enriched })

@@ -131,7 +131,7 @@ export default function DownloadPage({
 
               {/* Content */}
               <div className="flex-1 min-w-0 px-4 sm:px-7 py-4 sm:py-6">
-                <p className="font-display font-extrabold text-base sm:text-2xl leading-tight tracking-tight mb-3 line-clamp-2">
+                <p className="font-display font-extrabold text-sm sm:text-2xl leading-tight tracking-tight mb-3 line-clamp-2">
                   {productName}
                 </p>
                 <div className="border-t border-dashed border-border mb-3" />

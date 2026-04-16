@@ -155,7 +155,7 @@ export default function CartPage() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0 px-5 py-5 sm:py-6">
-                  <p className="font-display font-extrabold text-base sm:text-lg leading-tight line-clamp-2 mb-3 tracking-tight">
+                  <p className="font-display font-extrabold text-sm sm:text-lg leading-tight line-clamp-2 mb-3 tracking-tight">
                     {item.name}
                   </p>
                   

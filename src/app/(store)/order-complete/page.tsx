@@ -273,7 +273,7 @@ function DownloadCard({ item, index }: { item: DownloadItem; index: number }) {
           </div>
         )}
         <div className="flex-1 min-w-0 px-5 py-5">
-          <p className="font-display font-extrabold text-lg leading-tight truncate mb-3 tracking-tight">
+          <p className="font-display font-extrabold text-sm sm:text-lg leading-tight truncate mb-3 tracking-tight">
             {item.productName}
           </p>
           <div className="border-t border-dashed border-border mb-3" />

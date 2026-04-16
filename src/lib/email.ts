@@ -30,9 +30,9 @@ function emailWrapper(content: string): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Night Call Audio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap');
     .syne { font-family: 'Syne', Arial, sans-serif !important; }
   </style>
 </head>
@@ -50,7 +50,7 @@ function emailWrapper(content: string): string {
                   <td valign="middle">
                     <img src="${LOGO_URL}" alt="Night Call Audio" width="36" height="36"
                       style="display:inline-block;vertical-align:middle;margin-right:10px;" />
-                    <span class="syne" style="font-family:'Syne',Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:0.28em;text-transform:uppercase;color:#c8962e;vertical-align:middle;">
+                    <span class="syne" style="font-family:'Syne',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:#c8962e;vertical-align:middle;">
                       NIGHT CALL AUDIO
                     </span>
                   </td>

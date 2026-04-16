@@ -41,17 +41,17 @@ function emailWrapper(content: string): string {
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a" style="background-color:#0a0a0a;">
     <tr>
-      <td align="center" style="padding:40px 16px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+      <td align="center" bgcolor="#0a0a0a" style="padding:40px 16px;background-color:#0a0a0a;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a" style="max-width:560px;background-color:#0a0a0a;">
 
           <!-- Header -->
           <tr>
-            <td style="padding-bottom:32px;">
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <td bgcolor="#0a0a0a" style="padding-bottom:32px;background-color:#0a0a0a;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a" style="background-color:#0a0a0a;">
                 <tr>
-                  <td valign="middle">
+                  <td bgcolor="#0a0a0a" valign="middle" style="background-color:#0a0a0a;">
                     <img src="${LOGO_URL}" alt="Night Call Audio" width="36" height="36"
                       style="display:inline-block;vertical-align:middle;margin-right:10px;" />
                     <span class="syne" style="font-family:'Syne',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:#c8962e;vertical-align:middle;">
@@ -65,17 +65,17 @@ function emailWrapper(content: string): string {
 
           <!-- Card -->
           <tr>
-            <td class="email-card" bgcolor="#141414" style="border-radius:16px;border:1px solid #252525;overflow:hidden;">
+            <td class="email-card" bgcolor="#141414" style="border-radius:16px;border:1px solid #252525;overflow:hidden;background-color:#141414;">
               <!-- Accent top line -->
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td height="1" bgcolor="#c8962e" style="font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="1" bgcolor="#c8962e" style="font-size:0;line-height:0;background-color:#c8962e;">&nbsp;</td>
                 </tr>
               </table>
               <!-- Content -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#141414" style="background-color:#141414;">
                 <tr>
-                  <td style="padding:36px 40px;">
+                  <td bgcolor="#141414" style="padding:36px 40px;background-color:#141414;">
                     ${content}
                   </td>
                 </tr>
@@ -85,7 +85,7 @@ function emailWrapper(content: string): string {
 
           <!-- Footer -->
           <tr>
-            <td style="padding-top:28px;padding-bottom:8px;">
+            <td bgcolor="#0a0a0a" style="padding-top:28px;padding-bottom:8px;background-color:#0a0a0a;">
               <p class="email-footer" style="margin:0 0 6px;font-size:11px;color:#444444;text-align:center;letter-spacing:0.05em;">
                 © Night Call Audio · All rights reserved
               </p>

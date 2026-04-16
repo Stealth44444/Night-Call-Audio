@@ -3,15 +3,17 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCart } from '@/lib/cartStore'
 import type { Product } from '@/lib/products'
-import { Check, ArrowLeft, Sliders, Music } from 'lucide-react'
+import { Check, ArrowLeft, Sliders, Music, Zap } from 'lucide-react'
 import { getPublicUrl } from '@/lib/storage'
 import StarRating from './StarRating'
 
 export default function ProductDetail({ product }: { product: Product }) {
   const [added, setAdded] = useState(false)
   const addItem = useCart(s => s.addItem)
+  const router = useRouter()
 
   const handleAddToCart = () => {
     addItem({
@@ -22,6 +24,16 @@ export default function ProductDetail({ product }: { product: Product }) {
     })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
+  }
+
+  const handleBuyNow = () => {
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: getPublicUrl(product.image_url),
+    })
+    router.push('/cart')
   }
 
   const Icon = product.category === 'plugin' ? Sliders : Music
@@ -74,13 +86,20 @@ export default function ProductDetail({ product }: { product: Product }) {
             <p className="text-text-secondary leading-relaxed text-sm sm:text-base whitespace-pre-line break-keep">{product.description}</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
+            <button
+              onClick={handleBuyNow}
+              className="w-full py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 btn-glow relative z-10 bg-accent text-bg-deep hover:bg-accent-bright flex items-center justify-center gap-2"
+            >
+              <Zap size={18} />
+              바로 구매하기
+            </button>
             <button
               onClick={handleAddToCart}
-              className={`w-full py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 btn-glow relative z-10 ${
+              className={`w-full py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 border relative z-10 ${
                 added
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-accent text-bg-deep hover:bg-accent-bright'
+                  ? 'border-emerald-500 text-emerald-500 bg-emerald-500/10'
+                  : 'border-border hover:border-border-hover text-text-primary hover:bg-bg-elevated'
               }`}
             >
               {added ? (

@@ -199,8 +199,8 @@ function OrderCompleteContent() {
             <Loader2 size={16} className="animate-spin text-accent" />
             <p className="font-mono text-sm text-text-secondary tracking-wide">결제 확인 중...</p>
           </div>
-          <div className="w-full h-px bg-border mt-6">
-            <div className="h-px bg-accent animate-[progress_3s_ease-in-out_infinite]" style={{ width: '60%' }} />
+          <div className="w-full h-[2px] bg-border mt-6 overflow-hidden">
+            <div className="h-full bg-accent animate-progress" />
           </div>
           <p className="font-mono text-xs text-text-muted mt-3">{email}</p>
         </div>

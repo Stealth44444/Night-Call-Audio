@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   const { password } = await request.json()
   const secret = process.env.ADMIN_SECRET
 
-  if (password === secret) {
+  if (secret && password === secret) {
     const response = NextResponse.json({ success: true })
     
     // Set a cookie that lasts for 7 days

@@ -287,17 +287,17 @@ export default function AdminOrdersAllPage() {
                 {filtered.map(order => (
                   <tr key={order.id} className="group hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-4"><StatusBadge status={order.status} /></td>
-                    <td className="px-5 py-4 font-mono text-sm text-text-primary">{order.email}</td>
+                    <td className="px-5 py-4 font-mono text-sm text-text-primary whitespace-nowrap">{order.email}</td>
                     <td className="px-5 py-4 text-sm text-text-secondary max-w-[180px] truncate">{order.productName}</td>
                     <td className="px-5 py-4 font-display font-bold text-accent-bright whitespace-nowrap">
                       ₩{order.totalPrice.toLocaleString('ko-KR')}
                     </td>
                     <td className="px-5 py-4">
-                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary">
+                      <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary whitespace-nowrap">
                         {paymentLabel(order.paymentMethod)}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-sm text-text-muted whitespace-nowrap">{fmt(order.createdAt)}</td>
+                    <td className="px-5 py-4 text-sm text-text-muted whitespace-nowrap font-mono">{fmt(order.createdAt)}</td>
                     <td className="px-5 py-4">
                       {order.status === 'completed' ? (
                         <ExtendButton

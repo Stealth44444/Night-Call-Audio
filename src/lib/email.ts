@@ -30,27 +30,18 @@ function emailWrapper(content: string): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Night Call Audio</title>
-  <meta name="color-scheme" content="light dark" />
-  <meta name="supported-color-schemes" content="light dark" />
+  <!-- color-scheme: light → 클라이언트가 다크모드 자동 변환 시도하지 않음
+       (이미 배경이 #0a0a0a로 인라인 지정돼 있어 다크하게 표시됨) -->
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&display=swap');
     .syne { font-family: 'Syne', Arial, sans-serif !important; }
-
-    /* 다크모드: 클라이언트가 배경을 흰색으로 뒤집지 않도록 강제 고정 */
-    @media (prefers-color-scheme: dark) {
-      body, .body-bg { background-color: #0a0a0a !important; }
-      .email-outer  { background-color: #0a0a0a !important; }
-      .email-card   { background-color: #141414 !important; border-color: #252525 !important; }
-      .email-text   { color: #e8e8e8 !important; }
-      .email-muted  { color: #888888 !important; }
-      .email-dim    { color: #555555 !important; }
-      .email-footer { color: #444444 !important; }
-    }
   </style>
 </head>
-<body class="body-bg" style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table class="email-outer" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a">
+<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0a0a">
     <tr>
       <td align="center" style="padding:40px 16px;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">

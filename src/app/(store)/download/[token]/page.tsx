@@ -115,55 +115,50 @@ export default function DownloadPage({
         {/* Ready / Downloading */}
         {(status === 'ready' || status === 'downloading') && (
           <div className="border border-border bg-bg-deep/40">
-            <div className="flex items-stretch">
 
+            {/* Top row: thumbnail + info + download btn */}
+            <div className="flex items-stretch">
               {/* Accent stripe */}
               <div className="w-0.5 bg-accent shrink-0" />
 
               {/* Thumbnail */}
               {productImage && (
-                <div className="w-20 h-20 sm:w-40 sm:h-40 shrink-0 overflow-hidden self-stretch">
+                <div className="w-16 h-16 sm:w-40 sm:h-40 shrink-0 overflow-hidden self-stretch">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={productImage}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={productImage} alt="" className="w-full h-full object-cover" />
                 </div>
               )}
 
               {/* Content */}
-              <div className="flex-1 min-w-0 px-7 py-6 flex flex-col justify-between">
-                <div>
-                  <p className="font-display font-extrabold text-lg sm:text-2xl leading-tight tracking-tight mb-4 line-clamp-2">
-                    {productName}
-                  </p>
-                  <div className="border-t border-dashed border-border mb-4" />
-                  <div className="flex items-end justify-between gap-4">
-                    <MetaField label="구매일" value={purchasedAt ? fmt(purchasedAt) : '—'} shortValue={purchasedAt ? fmtShort(purchasedAt) : '—'} />
-                    <MetaField label="만료일" value={expiresAt ? fmt(expiresAt) : '—'} shortValue={expiresAt ? fmtShort(expiresAt) : '—'} align="right" />
-                  </div>
+              <div className="flex-1 min-w-0 px-4 sm:px-7 py-4 sm:py-6">
+                <p className="font-display font-extrabold text-base sm:text-2xl leading-tight tracking-tight mb-3 line-clamp-2">
+                  {productName}
+                </p>
+                <div className="border-t border-dashed border-border mb-3" />
+                <div className="flex items-end justify-between gap-3">
+                  <MetaField label="구매일" value={purchasedAt ? fmt(purchasedAt) : '—'} shortValue={purchasedAt ? fmtShort(purchasedAt) : '—'} />
+                  <MetaField label="만료일" value={expiresAt ? fmt(expiresAt) : '—'} shortValue={expiresAt ? fmtShort(expiresAt) : '—'} align="right" />
                 </div>
               </div>
 
               {/* Download action */}
-              <div className="flex items-center px-7 shrink-0 border-l border-border">
+              <div className="flex items-center px-4 sm:px-7 shrink-0 border-l border-border">
                 <button
                   onClick={handleDownload}
                   disabled={status === 'downloading'}
-                  className="flex flex-col items-center gap-2 text-text-muted hover:text-accent disabled:opacity-40 transition-colors"
+                  className="flex flex-col items-center gap-1.5 text-text-muted hover:text-accent disabled:opacity-40 transition-colors"
                 >
                   {status === 'downloading'
-                    ? <Loader2 size={22} className="animate-spin text-accent" />
-                    : <ArrowDownToLine size={22} />
+                    ? <Loader2 size={20} className="animate-spin text-accent" />
+                    : <ArrowDownToLine size={20} />
                   }
                   <span className="font-mono text-[9px] uppercase tracking-widest">
                     {status === 'downloading' ? '준비중' : '다운로드'}
                   </span>
                 </button>
               </div>
-
             </div>
+
           </div>
         )}
 

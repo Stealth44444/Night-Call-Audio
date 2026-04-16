@@ -42,14 +42,14 @@ function fmtExpiry(iso: string | null) {
 function StatusBadge({ status }: { status: string }) {
   if (status === 'completed') {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-green-500/10 border border-green-500/20 text-green-400">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 whitespace-nowrap">
         <div className="w-1 h-1 rounded-full bg-green-400" />
         완료
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400">
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 whitespace-nowrap">
       <div className="w-1 h-1 rounded-full bg-amber-400 animate-pulse" />
       대기중
     </span>
@@ -63,7 +63,7 @@ function DeleteControl({ onDelete, loading }: { onDelete: () => void; loading: b
 
   if (confirm) {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 whitespace-nowrap">
         <button
           onClick={() => { onDelete(); setConfirm(false) }}
           className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all"
@@ -119,8 +119,8 @@ function ExtendButton({
   if (!expiresAt) return <span className="text-[11px] text-text-muted">—</span>
 
   return (
-    <div className="flex items-center gap-2">
-      <span className={`text-[11px] font-mono ${expiry?.expired ? 'text-red-400' : 'text-text-muted'}`}>
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <span className={`text-[11px] font-mono whitespace-nowrap ${expiry?.expired ? 'text-red-400' : 'text-text-muted'}`}>
         {expiry?.expired ? '만료 ' : ''}{expiry?.label}
       </span>
       <button

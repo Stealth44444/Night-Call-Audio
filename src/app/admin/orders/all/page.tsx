@@ -42,16 +42,16 @@ function fmtExpiry(iso: string | null) {
 function StatusBadge({ status }: { status: string }) {
   if (status === 'completed') {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 whitespace-nowrap">
-        <div className="w-1 h-1 rounded-full bg-green-400" />
-        완료
+      <span className="inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-0.5 rounded-full bg-[#1a3a2a] whitespace-nowrap" style={{ boxShadow: 'inset 0 0 0 0.5px rgba(52,199,89,0.35)' }}>
+        <span className="w-1.5 h-1.5 rounded-full bg-[#34c759] shadow-[0_0_4px_rgba(52,199,89,0.7)] shrink-0" />
+        <span className="text-[11px] font-medium text-[#34c759] tracking-normal">완료</span>
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 whitespace-nowrap">
-      <div className="w-1 h-1 rounded-full bg-amber-400 animate-pulse" />
-      대기중
+    <span className="inline-flex items-center gap-1.5 pl-1.5 pr-2.5 py-0.5 rounded-full bg-[#3a2e10] whitespace-nowrap" style={{ boxShadow: 'inset 0 0 0 0.5px rgba(255,196,0,0.35)' }}>
+      <span className="w-1.5 h-1.5 rounded-full bg-[#ffc400] shadow-[0_0_4px_rgba(255,196,0,0.6)] shrink-0 animate-pulse" />
+      <span className="text-[11px] font-medium text-[#ffc400] tracking-normal">대기중</span>
     </span>
   )
 }

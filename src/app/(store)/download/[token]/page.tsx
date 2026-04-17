@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { use } from 'react'
 import { ArrowDownToLine, Clock, AlertTriangle, Loader2 } from 'lucide-react'
 import FloatingAnimation from '@/components/FloatingAnimation'
+import ReviewForm from '@/components/ReviewForm'
 
 type Status = 'loading' | 'ready' | 'downloading' | 'expired' | 'error'
 
@@ -160,6 +161,11 @@ export default function DownloadPage({
             </div>
 
           </div>
+        )}
+
+        {/* 리뷰 폼 */}
+        {(status === 'ready' || status === 'downloading') && (
+          <ReviewForm token={token} />
         )}
 
         {/* Expired */}

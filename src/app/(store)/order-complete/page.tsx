@@ -138,7 +138,7 @@ function OrderCompleteContent() {
             <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-text-muted mb-3">안내</p>
             {[
               '입금 확인 후 이메일로 다운로드 링크를 발송합니다.',
-              '처리까지 영업일 기준 1~2일이 소요될 수 있습니다.',
+              '오전 10시 ~ 자정 사이 입금 시 30분 내 승인됩니다.',
               '문의사항은 이메일로 연락해 주세요.',
             ].map((text, i) => (
               <div key={i} className="flex items-start gap-2.5">
@@ -253,8 +253,8 @@ function OrderCompleteContent() {
             <Mail size={20} className="text-accent mb-5" />
             <p className="font-display font-bold text-xl mb-3">입금 확인 중입니다</p>
             <p className="text-text-secondary text-sm leading-relaxed">
-              입금이 확인되면 이메일로 다운로드 링크를 보내드립니다.<br />
-              확인까지 영업일 기준 최대 24시간이 소요될 수 있습니다.
+              입금 확인 후 이메일로 다운로드 링크를 보내드립니다.<br />
+              오전 10시 ~ 자정 사이 입금 시 30분 내 승인됩니다.
             </p>
             <button
               onClick={() => startPolling(email)}

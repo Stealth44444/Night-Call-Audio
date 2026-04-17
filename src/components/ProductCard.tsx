@@ -3,7 +3,6 @@ import Image from 'next/image'
 import type { Product } from '@/lib/products'
 import { Sliders, Music } from 'lucide-react'
 import { getPublicUrl } from '@/lib/storage'
-import StarRating from './StarRating'
 
 const categoryLabels: Record<string, string> = {
   plugin:     '믹싱 플러그인',
@@ -21,7 +20,7 @@ const categoryGradients: Record<string, string> = {
   bundle: 'from-[#764105]/30 via-[#FF299B]/30 to-[#1818E7]/30',
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, rating }: { product: Product; rating?: { average: number; count: number } }) {
   const gradient = categoryGradients[product.category] || categoryGradients.preset
   const Icon = product.category === 'plugin' ? Sliders : Music
 
@@ -52,14 +51,27 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="flex flex-col flex-grow text-center md:text-left px-2">
         <span className="text-[10px] font-bold uppercase tracking-widest text-accent/80 mb-1">{categoryLabels[product.category] ?? product.category}</span>
         
-        <h3 className="font-display font-bold leading-tight text-base md:text-lg text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2 mb-2 min-h-[2.5rem] md:min-h-[3rem]">
+        <h3 className="font-display font-bold leading-tight text-base md:text-lg text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2 mb-1.5">
           {product.name}
         </h3>
-        <div className="mt-auto flex flex-row items-center md:items-start">
-          <p className="font-display font-bold text-accent-bright text-xl tracking-tight whitespace-nowrap">
-            ₩{Number(product.price).toLocaleString('ko-KR')}
-          </p>
-        </div>
+        {rating && (
+          <div className="flex justify-center md:justify-start items-center gap-1 mb-1.5">
+            <div className="flex items-center gap-px">
+              {[1,2,3,4,5].map(i => (
+                <span key={i} className={`text-[10px] ${i <= Math.round(rating.average) ? 'text-[#c8922a]/60' : 'text-text-muted/20'}`}>★</span>
+              ))}
+            </div>
+            <span className="font-mono text-[10px] text-text-muted/60 tracking-wide">
+              {rating.average.toFixed(1)}
+            </span>
+            <span className="font-mono text-[10px] text-text-muted/40">
+              ({rating.count})
+            </span>
+          </div>
+        )}
+        <p className="mt-auto font-display font-bold text-accent-bright text-xl tracking-tight whitespace-nowrap">
+          ₩{Number(product.price).toLocaleString('ko-KR')}
+        </p>
       </div>
     </div>
     </Link>

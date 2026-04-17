@@ -3,12 +3,14 @@
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductCard from './ProductCard'
+import type { RatingMap } from '@/lib/products'
 
 interface ProductCarouselProps {
   products: any[]
+  ratings?: RatingMap
 }
 
-export default function ProductCarousel({ products }: ProductCarouselProps) {
+export default function ProductCarousel({ products, ratings }: ProductCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -55,7 +57,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
             key={product.id} 
             className="flex-shrink-0 w-[155px] sm:w-[190px] md:w-[210px] snap-start"
           >
-            <ProductCard product={product} />
+            <ProductCard product={product} rating={ratings?.[product.id]} />
           </div>
         ))}
       </div>

@@ -42,3 +42,29 @@ export async function getProductsByCategory(category: string): Promise<Product[]
   if (error) throw error
   return data
 }
+
+export interface RatingMap {
+  [productId: string]: { average: number; count: number }
+}
+
+export async function getRatings(productIds: string[]): Promise<RatingMap> {
+  if (productIds.length === 0) return {}
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('product_id, rating')
+    .in('product_id', productIds)
+
+  if (error || !data) return {}
+
+  const map: RatingMap = {}
+  for (const row of data) {
+    if (!map[row.product_id]) map[row.product_id] = { average: 0, count: 0 }
+    map[row.product_id].count++
+    map[row.product_id].average += row.rating
+  }
+  for (const id of Object.keys(map)) {
+    map[id].average = Math.round((map[id].average / map[id].count) * 10) / 10
+  }
+  return map
+}

@@ -8,8 +8,6 @@ const CATEGORIES = [
   { key: 'vocal',      label: '보컬 프리셋' },
   { key: 'plugin',     label: '믹싱 플러그인' },
   { key: 'instrument', label: '가상 악기' },
-  { key: 'mastering',  label: '마스터링' },
-  { key: 'sample',     label: '샘플 팩' },
   { key: 'bundle',     label: '번들' },
 ]
 

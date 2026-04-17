@@ -1,4 +1,4 @@
-import { getProducts } from '@/lib/products'
+import { getProducts, getRatings } from '@/lib/products'
 import FloatingAnimation from '@/components/FloatingAnimation'
 import ChatFAQ from '@/components/ChatFAQ'
 import DAWMarquee from '@/components/DAWMarquee'
@@ -14,7 +14,7 @@ const SECTION_DEFS = [
     catKey: 'vocal',
     title: '아티스트 보컬 프리셋',
     sub: 'Artist Vocal Presets',
-    filter: (p: any) => p.category === 'preset' && p.name.toLowerCase().includes('vocal'),
+    filter: (p: any) => p.category === 'preset',
   },
   {
     catKey: 'plugin',
@@ -27,18 +27,6 @@ const SECTION_DEFS = [
     title: '가상 악기 컬렉션',
     sub: 'Virtual Instruments',
     filter: (p: any) => p.category === 'instrument',
-  },
-  {
-    catKey: 'mastering',
-    title: '마스터링 프리셋',
-    sub: 'Mastering Presets',
-    filter: (p: any) => p.category === 'preset' && !p.name.toLowerCase().includes('vocal'),
-  },
-  {
-    catKey: 'sample',
-    title: '샘플 팩',
-    sub: 'Sample Packs',
-    filter: (p: any) => p.category === 'sample',
   },
   {
     catKey: 'bundle',
@@ -55,6 +43,7 @@ export default async function HomePage({
 }) {
   const { cat = 'all' } = await searchParams
   const allProducts = await getProducts()
+  const ratings = await getRatings(allProducts.map(p => p.id))
 
   const setupProduct = allProducts.find(p => p.name.includes('올인원 원격 세팅'))
 
@@ -105,11 +94,11 @@ export default async function HomePage({
       </section>
 
       {/* COMPATIBLE DAWs */}
-      <section className="relative pt-12 pb-10 sm:pt-24 sm:pb-20 overflow-hidden bg-gradient-to-b from-bg-deep/0 to-bg-deep">
+      <section className="relative pt-12 pb-20 sm:pt-24 sm:pb-32 overflow-hidden bg-gradient-to-b from-bg-deep/0 to-bg-deep">
         <div className="max-w-7xl mx-auto px-6 text-center mb-6 sm:mb-12">
-          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-accent">호환성</span>
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-accent">Compatibility</span>
           <h2 className="font-display font-bold text-xl sm:text-3xl md:text-4xl mt-2">
-            모든 DAW와 호환됩니다
+            Works with every DAW
           </h2>
         </div>
         <DAWMarquee />
@@ -132,7 +121,7 @@ export default async function HomePage({
                 </div>
               </div>
               {filteredProducts.length > 0 ? (
-                <ProductCarousel products={filteredProducts} />
+                <ProductCarousel products={filteredProducts} ratings={ratings} />
               ) : (
                 <div className="py-12 text-center border border-dashed border-border rounded-2xl bg-bg-surface/30">
                   <p className="text-sm text-text-muted italic">준비 중인 컬렉션입니다.</p>

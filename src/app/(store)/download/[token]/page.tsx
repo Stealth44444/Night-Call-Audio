@@ -35,6 +35,7 @@ export default function DownloadPage({
   const [productImage, setProductImage] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState('')
   const [purchasedAt, setPurchasedAt] = useState('')
+  const [hasReviewed, setHasReviewed] = useState(false)
   const hasFetched = useRef(false)
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function DownloadPage({
           setProductImage(data.productImage ?? null)
           setExpiresAt(data.expiresAt)
           setPurchasedAt(data.purchasedAt)
+          setHasReviewed(!!data.hasReviewed)
           setStatus('ready')
         } else if (data.error === 'expired') {
           setStatus('expired')
@@ -165,7 +167,7 @@ export default function DownloadPage({
 
         {/* 리뷰 폼 */}
         {(status === 'ready' || status === 'downloading') && (
-          <ReviewForm token={token} />
+          <ReviewForm token={token} hasReviewed={hasReviewed} />
         )}
 
         {/* Expired */}

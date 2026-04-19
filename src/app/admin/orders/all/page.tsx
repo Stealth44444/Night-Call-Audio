@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Loader2, ShoppingCart, RefreshCw, Trash2, Clock, Download } from 'lucide-react'
+import { Loader2, ShoppingCart, RefreshCw, Trash2, Clock, Download, X, ChevronRight } from 'lucide-react'
 
 interface Order {
   id: string
@@ -25,6 +25,13 @@ function paymentLabel(method: string | null) {
 function fmt(iso: string) {
   return new Date(iso).toLocaleString('ko-KR', {
     month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  })
+}
+
+function fmtFull(iso: string) {
+  return new Date(iso).toLocaleString('ko-KR', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit',
   })
 }
@@ -56,86 +63,6 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function DeleteControl({ onDelete, loading }: { onDelete: () => void; loading: boolean }) {
-  const [confirm, setConfirm] = useState(false)
-
-  if (loading) return <Loader2 size={15} className="animate-spin text-text-muted" />
-
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-1.5 whitespace-nowrap">
-        <button
-          onClick={() => { onDelete(); setConfirm(false) }}
-          className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all"
-        >
-          삭제
-        </button>
-        <button
-          onClick={() => setConfirm(false)}
-          className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-muted hover:text-text-primary transition-all"
-        >
-          취소
-        </button>
-      </div>
-    )
-  }
-
-  return (
-    <button
-      onClick={() => setConfirm(true)}
-      className="p-2 text-text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
-      title="주문 삭제"
-    >
-      <Trash2 size={15} />
-    </button>
-  )
-}
-
-function ExtendButton({
-  orderId,
-  expiresAt,
-  onExtended,
-}: {
-  orderId: string
-  expiresAt: string | null
-  onExtended: (newExpiry: string) => void
-}) {
-  const [loading, setLoading] = useState(false)
-  const expiry = fmtExpiry(expiresAt)
-
-  const handleExtend = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch(`/api/admin/orders/${orderId}/extend-token`, { method: 'PATCH' })
-      if (res.ok) {
-        const data = await res.json()
-        onExtended(data.expiresAt)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (!expiresAt) return <span className="text-[11px] text-text-muted">—</span>
-
-  return (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <span className={`text-[11px] font-mono whitespace-nowrap ${expiry?.expired ? 'text-red-400' : 'text-text-muted'}`}>
-        {expiry?.expired ? '만료 ' : ''}{expiry?.label}
-      </span>
-      <button
-        onClick={handleExtend}
-        disabled={loading}
-        className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-muted hover:text-accent hover:border-accent/40 transition-all disabled:opacity-40"
-        title="+7일 연장"
-      >
-        {loading ? <Loader2 size={10} className="animate-spin" /> : <Clock size={10} />}
-        +7일
-      </button>
-    </div>
-  )
-}
-
 function exportCSV(orders: Order[]) {
   const header = ['주문ID', '고객 이메일', '상품명', '금액', '결제수단', '상태', '주문일시', '다운로드 만료일']
   const rows = orders.map(o => [
@@ -153,7 +80,7 @@ function exportCSV(orders: Order[]) {
     .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
     .join('\n')
 
-  const bom = '\uFEFF' // Excel UTF-8 BOM
+  const bom = '\uFEFF'
   const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -163,11 +90,163 @@ function exportCSV(orders: Order[]) {
   URL.revokeObjectURL(url)
 }
 
+function OrderDrawer({
+  order,
+  onClose,
+  onDelete,
+  onExtended,
+  deleting,
+}: {
+  order: Order | null
+  onClose: () => void
+  onDelete: (id: string) => void
+  onExtended: (id: string, newExpiry: string) => void
+  deleting: boolean
+}) {
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [extending, setExtending] = useState(false)
+
+  useEffect(() => {
+    setDeleteConfirm(false)
+  }, [order?.id])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  const handleExtend = async () => {
+    if (!order) return
+    setExtending(true)
+    try {
+      const res = await fetch(`/api/admin/orders/${order.id}/extend-token`, { method: 'PATCH' })
+      if (res.ok) {
+        const data = await res.json()
+        onExtended(order.id, data.expiresAt)
+      }
+    } finally {
+      setExtending(false)
+    }
+  }
+
+  const expiry = order ? fmtExpiry(order.tokenExpiresAt) : null
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${order ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={onClose}
+      />
+
+      {/* Drawer */}
+      <div
+        className={`fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm bg-bg-deep border-l border-border flex flex-col transition-transform duration-300 ease-out ${order ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border shrink-0">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">주문 상세</span>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-all">
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Content */}
+        {order && (
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            {/* Status + amount */}
+            <div className="flex items-center justify-between">
+              <StatusBadge status={order.status} />
+              <span className="font-display font-bold text-xl text-accent-bright">
+                ₩{order.totalPrice.toLocaleString('ko-KR')}
+              </span>
+            </div>
+
+            {/* Fields */}
+            <div className="space-y-4">
+              <Field label="고객 이메일" value={order.email} mono />
+              <Field label="상품명" value={order.productName} />
+              <Field label="결제수단" value={paymentLabel(order.paymentMethod)} />
+              <Field label="주문일시" value={fmtFull(order.createdAt)} mono />
+              {order.tokenExpiresAt && (
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-1">다운로드 만료</span>
+                  <span className={`font-mono text-sm ${expiry?.expired ? 'text-red-400' : 'text-text-primary'}`}>
+                    {expiry?.expired ? '만료됨 · ' : ''}{fmtFull(order.tokenExpiresAt)}
+                  </span>
+                </div>
+              )}
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-1">주문 ID</span>
+                <span className="font-mono text-[11px] text-text-muted break-all">{order.id}</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3 pt-2 border-t border-border">
+              {order.status === 'completed' && order.tokenExpiresAt && (
+                <button
+                  onClick={handleExtend}
+                  disabled={extending}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl bg-bg-elevated border border-border text-text-secondary hover:text-accent hover:border-accent/40 transition-all disabled:opacity-40"
+                >
+                  {extending ? <Loader2 size={13} className="animate-spin" /> : <Clock size={13} />}
+                  다운로드 기간 +7일 연장
+                </button>
+              )}
+
+              {!deleteConfirm ? (
+                <button
+                  onClick={() => setDeleteConfirm(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl bg-bg-elevated border border-border text-text-muted hover:text-red-400 hover:border-red-500/30 transition-all"
+                >
+                  <Trash2 size={13} />
+                  주문 삭제
+                </button>
+              ) : (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4 space-y-3">
+                  <p className="text-xs text-text-secondary">이 주문을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { onDelete(order.id); setDeleteConfirm(false) }}
+                      disabled={deleting}
+                      className="flex-1 py-2 text-[11px] font-bold uppercase tracking-wider rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all disabled:opacity-40"
+                    >
+                      {deleting ? <Loader2 size={12} className="animate-spin mx-auto" /> : '삭제 확인'}
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirm(false)}
+                      className="flex-1 py-2 text-[11px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-muted hover:text-text-primary transition-all"
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
+function Field({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div>
+      <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted block mb-1">{label}</span>
+      <span className={`text-sm text-text-primary ${mono ? 'font-mono' : ''}`}>{value}</span>
+    </div>
+  )
+}
+
 export default function AdminOrdersAllPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<Filter>('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   const fetchOrders = useCallback(async () => {
     setLoading(true)
@@ -190,7 +269,10 @@ export default function AdminOrdersAllPage() {
     setDeletingId(id)
     try {
       const res = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' })
-      if (res.ok) setOrders(prev => prev.filter(o => o.id !== id))
+      if (res.ok) {
+        setOrders(prev => prev.filter(o => o.id !== id))
+        setSelectedOrder(null)
+      }
     } finally {
       setDeletingId(null)
     }
@@ -198,6 +280,7 @@ export default function AdminOrdersAllPage() {
 
   const handleExtended = (orderId: string, newExpiry: string) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, tokenExpiresAt: newExpiry } : o))
+    setSelectedOrder(prev => prev?.id === orderId ? { ...prev, tokenExpiresAt: newExpiry } : prev)
   }
 
   const filtered = orders.filter(o => {
@@ -279,13 +362,16 @@ export default function AdminOrdersAllPage() {
                   <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">금액</th>
                   <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">결제</th>
                   <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">주문일시</th>
-                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">다운로드 만료</th>
-                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">삭제</th>
+                  <th className="px-5 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest w-6" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map(order => (
-                  <tr key={order.id} className="group hover:bg-white/[0.02] transition-colors">
+                  <tr
+                    key={order.id}
+                    onClick={() => setSelectedOrder(order)}
+                    className="group hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  >
                     <td className="px-5 py-4"><StatusBadge status={order.status} /></td>
                     <td className="px-5 py-4 font-mono text-sm text-text-primary whitespace-nowrap">{order.email}</td>
                     <td className="px-5 py-4 text-sm text-text-secondary max-w-[180px] truncate">{order.productName}</td>
@@ -298,22 +384,8 @@ export default function AdminOrdersAllPage() {
                       </span>
                     </td>
                     <td className="px-5 py-4 text-sm text-text-muted whitespace-nowrap font-mono">{fmt(order.createdAt)}</td>
-                    <td className="px-5 py-4">
-                      {order.status === 'completed' ? (
-                        <ExtendButton
-                          orderId={order.id}
-                          expiresAt={order.tokenExpiresAt}
-                          onExtended={(exp) => handleExtended(order.id, exp)}
-                        />
-                      ) : (
-                        <span className="text-[11px] text-text-muted">—</span>
-                      )}
-                    </td>
                     <td className="px-5 py-4 text-right">
-                      <DeleteControl
-                        loading={deletingId === order.id}
-                        onDelete={() => handleDelete(order.id)}
-                      />
+                      <ChevronRight size={14} className="text-text-muted/30 group-hover:text-text-muted transition-colors" />
                     </td>
                   </tr>
                 ))}
@@ -324,7 +396,11 @@ export default function AdminOrdersAllPage() {
           {/* Mobile cards */}
           <div className="lg:hidden space-y-3">
             {filtered.map(order => (
-              <div key={order.id} className="glass rounded-2xl border border-border p-5 space-y-3">
+              <div
+                key={order.id}
+                onClick={() => setSelectedOrder(order)}
+                className="glass rounded-2xl border border-border p-5 space-y-3 cursor-pointer hover:border-border-hover transition-colors"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-mono text-sm text-text-primary truncate">{order.email}</p>
@@ -335,7 +411,7 @@ export default function AdminOrdersAllPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <StatusBadge status={order.status} />
                     <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-bg-elevated border border-border text-text-secondary">
@@ -343,31 +419,21 @@ export default function AdminOrdersAllPage() {
                     </span>
                     <span className="text-[11px] text-text-muted font-mono">{fmt(order.createdAt)}</span>
                   </div>
-                  <div className="shrink-0">
-                    <DeleteControl
-                      loading={deletingId === order.id}
-                      onDelete={() => handleDelete(order.id)}
-                    />
-                  </div>
+                  <ChevronRight size={14} className="text-text-muted/40 shrink-0" />
                 </div>
-
-                {order.status === 'completed' && (
-                  <div className="pt-1 border-t border-border">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">다운로드 만료</span>
-                      <ExtendButton
-                        orderId={order.id}
-                        expiresAt={order.tokenExpiresAt}
-                        onExtended={(exp) => handleExtended(order.id, exp)}
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
         </>
       )}
+
+      <OrderDrawer
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        onDelete={handleDelete}
+        onExtended={handleExtended}
+        deleting={!!deletingId}
+      />
     </div>
   )
 }

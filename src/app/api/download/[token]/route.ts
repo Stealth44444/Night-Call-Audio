@@ -35,11 +35,18 @@ export async function GET(
     imageUrl = data.publicUrl
   }
 
+  const { data: existingReview } = await supabaseAdmin
+    .from('reviews')
+    .select('id')
+    .eq('token', token)
+    .maybeSingle()
+
   return NextResponse.json({
     productName: product?.name ?? 'Unknown Product',
     productImage: imageUrl,
     expiresAt: downloadToken.expires_at,
     purchasedAt: downloadToken.created_at,
+    hasReviewed: !!existingReview,
   })
 }
 

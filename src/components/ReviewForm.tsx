@@ -5,14 +5,15 @@ import { Star } from 'lucide-react'
 
 interface ReviewFormProps {
   token: string
+  hasReviewed?: boolean
 }
 
 type SubmitState = 'idle' | 'submitting' | 'done' | 'error' | 'already'
 
-export default function ReviewForm({ token }: ReviewFormProps) {
+export default function ReviewForm({ token, hasReviewed = false }: ReviewFormProps) {
   const [hovered, setHovered] = useState(0)
   const [selected, setSelected] = useState(0)
-  const [submitState, setSubmitState] = useState<SubmitState>('idle')
+  const [submitState, setSubmitState] = useState<SubmitState>(hasReviewed ? 'already' : 'idle')
 
   const handleSubmit = async () => {
     if (selected === 0) return
